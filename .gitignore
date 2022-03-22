@@ -1,0 +1,7 @@
+out
+dist
+node_modules
+.vscode-test/
+*.vsix
+
+/Users/ilanpinto/dev/ocm-vs-extension/ocm-vs-extension/.odo/env

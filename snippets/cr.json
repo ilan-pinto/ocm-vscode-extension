@@ -1,0 +1,34 @@
+{
+    "manifestwork": {
+      "scope": "yaml",
+      "prefix": "ManifestWork-v1",
+      "body": [
+            "apiVersion: work.open-cluster-management.io/v1",
+            "kind: ManifestWork",
+            "metadata:",
+            "    namespace: ${1: namespace}",
+            "    name: ${2: manifestwork-name}",
+            "spec:",
+            "    workload:",
+            "    manifests:",
+            "       - apiVersion: apps/v1",
+            "         kind: Deployment",
+            "         metadata:",
+            "            name: hello",
+            "             namespace: default",
+            "         spec:",
+            "            selector:",
+            "            matchLabels:",
+            "                app: hello",
+            "            template:",
+            "            metadata:",
+            "                labels:",
+            "                  app: ${3: app-name}",
+            "            spec:",
+            "                containers:",
+            "                - name: hello",
+            "                  image: quay.io/asmacdo/busybox" ] ,
+                "description": "ManifestWork snippet "                                            
+    }
+}
+  
