@@ -29,6 +29,101 @@
             "                - name: hello",
             "                  image: quay.io/asmacdo/busybox" ] ,
                 "description": "ManifestWork snippet "                                            
+    },
+    
+    "placement": {
+            "scope": "yaml",
+            "prefix": "Placement-v1",
+            "body": [
+                "kind: Placement",
+                "metadata:",
+                "  name: ${1: name}",
+                "  namespace: ${2: namespace}",
+                "spec:",
+                "  numberOfClusters: ${3: number-of-clusters}",
+                "  clusterSets:",
+                "   # - prod",
+                "     - ${4: cluster-set-name}",               
+                "  predicates:",
+                "    - requiredClusterSelector:",
+                "        labelSelector:",
+                "          matchLabels:",
+                "            ${4: match-labels-pair} #purpose: test",
+                "        claimSelector:",
+                "          matchExpressions:",
+                "#            - key: platform.open-cluster-management.io",
+                "#              operator: In",
+                "#              values:",
+                "#                - aws",                
+                "             ${5: expressions}"
+
+            ],
+            "description": " "
+
+    },
+
+    "placementrules": {
+        "scope": "yaml",
+        "prefix": "PlacementRules-v1",
+        "body": [
+            "apiVersion: apps.open-cluster-management.io/v1",
+            "kind: PlacementRule",
+            "metadata:",
+            "  name: ${1: name}-placement-rule",
+            "  namespace: ${2: namespace}",
+            "spec:",
+            "  clusterSelector:",
+            "    matchLabels:",
+            "    # 'usage': 'production",
+            "      ${3: match-labels-pair}"],
+        "description": " "
+    },
+
+    "subscription": {
+        "scope": "yaml",
+        "prefix": "Subscription-v1",
+        "body": [
+            "apiVersion: apps.open-cluster-management.io/v1",
+            "kind: Subscription",
+            "metadata:",
+            "  name: ${1: app-name}",
+            "  namespace: ${2: namespace}",
+            "  labels:",
+            "    ${3: labels}",
+            "# annotations might change based on channel type",
+            "  annotations:",
+            "    apps.open-cluster-management.io/github-path: ${4: folder-path}",
+            "    apps.open-cluster-management.io/github-branch: ${5: branch}",  
+            "spec:",
+            "  channel: ${6: channel-file}",
+            "  placement:",
+            "    placementRef:",
+            "      kind: PlacementRule",
+            "      name: ${7: placement-rule-name}"
+            ],
+        "description": " "
+    },
+
+    "channel": {
+        "scope": "yaml",
+        "prefix": "Channel-v1",
+        "body": [
+            "# this resource is used to define the object to be deployed ",
+            "apiVersion: apps.open-cluster-management.io/v1",
+            "kind: Channel",
+            "metadata:",
+            "  name: ${1: app-name}",
+            "  namespace: ${2: namespace}",
+            "spec:",
+            "    type: Git",
+            "    pathname: ${3|Git,Helm,Object|}",
+            "# secret ref is optional. if no credentials are needed, delete this section",
+            "    secretRef:",
+            "      name: ${4: secret}" ],
+        "description": " OCM Channel"
     }
+
 }
+
+
   
