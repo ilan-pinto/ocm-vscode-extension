@@ -33,9 +33,10 @@
     
     "placement": {
             "scope": "yaml",
-            "prefix": "Placement-v1",
+            "prefix": "Placement-v1beta1",
             "body": [
                 "kind: Placement",
+                "apiVersion: cluster.open-cluster-management.io/v1beta1",
                 "metadata:",
                 "  name: ${1: name}",
                 "  namespace: ${2: namespace}",
@@ -58,7 +59,7 @@
                 "             ${5: expressions}"
 
             ],
-            "description": " "
+            "description": "Logic rule for selecting workloads clusters"
 
     },
 
@@ -101,7 +102,7 @@
             "      kind: PlacementRule",
             "      name: ${7: placement-rule-name}"
             ],
-        "description": " "
+        "description": "Define a rule for selecting workloads clusters for workload"
     },
 
     "channel": {
