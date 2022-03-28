@@ -1,21 +1,42 @@
 import * as vscode from 'vscode';
-import * as newProject from './commands/newProject' ;
+import * as newProject from './commands/newProject';
 
-// called on actication of the extension
-export function activate(context: vscode.ExtensionContext) {
-	// register new-project command
-	let disposable = vscode.commands.registerCommand('ocm-vs-extension.ocmNewProject', async () => {
-		 // project name defaults "ocm-application"
-		let projectFolder = await vscode.window.showInputBox({
-			placeHolder: "insert project name"
-		}) || "ocm-application";
-		// subscribe the command execution
-		newProject.create(projectFolder);
-		context.subscriptions.push(disposable);
-	});
+const extName = 'ocm-vs-extension';
+
+/*#########################
+###### COMMAND NAMES ######
+#########################*/
+const cmdNewProjectName = 'ocmNewProject';
+
+/*#########################
+######## HANDLERS #########
+#########################*/
+async function cmdNewProjectHandler() {
+	// project name defaults "ocm-application"
+	let projectFolder = await vscode.window.showInputBox({
+		placeHolder: "insert project name",
+	}) || "ocm-application";
+	// create the project folder
+	newProject.create(projectFolder);
 }
 
-// called on deactivation of the extension
+/*#########################
+####### DISPOSABLES #######
+#########################*/
+const cmdNewProjectDisposable = vscode.commands.registerCommand(
+	`${extName}.${cmdNewProjectName}`,
+	async () => {
+		await cmdNewProjectHandler();
+	}
+);
+
+/*#########################
+######### EXPORTS #########
+#########################*/
+export async function activate(context: vscode.ExtensionContext) {
+	context.subscriptions.push(cmdNewProjectDisposable); // command: ocm-vs-extension.ocmNewProject
+}
+
 export function deactivate() {
 	// no deactivate actions required
 }
