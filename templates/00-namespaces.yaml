@@ -1,9 +1,10 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: helloworld-ch
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: helloworld
+  name: helloworld-chn
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: helloworld-app

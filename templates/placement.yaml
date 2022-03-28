@@ -1,12 +1,15 @@
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
+---
+apiVersion: cluster.open-cluster-management.io/v1alpha1
+kind: Placement
 metadata:
-  name: helloworld-app-placement
-  namespace: helloworld
-  labels:
-    app: helloworld-app
+  name: helloworld-placement
+  namespace: helloworld-app
 spec:
   clusterReplicas: 1
-  clusterSelector:
-    matchLabels:
-      usage: development
+  clusterSets:
+    - helloworld-clusterset
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchLabels:
+            usage: development
