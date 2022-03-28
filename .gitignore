@@ -1,7 +1,6 @@
-out
-dist
+.vscode-test
 node_modules
-.vscode-test/
-*.vsix
-
-/Users/ilanpinto/dev/ocm-vs-extension/ocm-vs-extension/.odo/env
+out
+# note the order of the next testWorkspace records
+testWorkspace/*
+!testWorkspace/.gitkeep
