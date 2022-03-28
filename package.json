@@ -29,13 +29,16 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run copy-files && npm run compile",    
+    "vscode:prepublish": "npm run clean-build",
     "compile": "tsc -p ./",
     "watch": "npm run copy-files && tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "pretest": "npm run lint && npm run build",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "copy-files": "mkdir out/templates/ && cp templates/* out/templates/"
+    "copy-files": "mkdir out/templates/ && cp templates/* out/templates/",
+    "clean": "rm -r out",
+    "build": "npm run compile && npm run copy-files",
+    "clean-build": "npm run clean && npm run build"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
