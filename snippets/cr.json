@@ -1,130 +1,101 @@
 {
-    "manifestwork": {
-      "scope": "yaml",
-      "prefix": "ManifestWork-v1",
-      "body": [
-            "apiVersion: work.open-cluster-management.io/v1",
-            "kind: ManifestWork",
-            "metadata:",
-            "    namespace: ${1: namespace}",
-            "    name: ${2: manifestwork-name}",
-            "spec:",
-            "    workload:",
-            "    manifests:",
-            "       - apiVersion: apps/v1",
-            "         kind: Deployment",
-            "         metadata:",
-            "            name: hello",
-            "             namespace: default",
-            "         spec:",
-            "            selector:",
-            "            matchLabels:",
-            "                app: hello",
-            "            template:",
-            "            metadata:",
-            "                labels:",
-            "                  app: ${3: app-name}",
-            "            spec:",
-            "                containers:",
-            "                - name: hello",
-            "                  image: quay.io/asmacdo/busybox" ] ,
-                "description": "ManifestWork snippet "                                            
-    },
-    
-    "placement": {
-            "scope": "yaml",
-            "prefix": "Placement-v1beta1",
-            "body": [
-                "kind: Placement",
-                "apiVersion: cluster.open-cluster-management.io/v1beta1",
-                "metadata:",
-                "  name: ${1: name}",
-                "  namespace: ${2: namespace}",
-                "spec:",
-                "  numberOfClusters: ${3: number-of-clusters}",
-                "  clusterSets:",
-                "   # - prod",
-                "     - ${4: cluster-set-name}",               
-                "  predicates:",
-                "    - requiredClusterSelector:",
-                "        labelSelector:",
-                "          matchLabels:",
-                "            ${4: match-labels-pair} #purpose: test",
-                "        claimSelector:",
-                "          matchExpressions:",
-                "#            - key: platform.open-cluster-management.io",
-                "#              operator: In",
-                "#              values:",
-                "#                - aws",                
-                "             ${5: expressions}"
-
-            ],
-            "description": "Logic rule for selecting workloads clusters"
-
-    },
-
-    "placementrules": {
-        "scope": "yaml",
-        "prefix": "PlacementRules-v1",
-        "body": [
-            "apiVersion: apps.open-cluster-management.io/v1",
-            "kind: PlacementRule",
-            "metadata:",
-            "  name: ${1: name}-placement-rule",
-            "  namespace: ${2: namespace}",
-            "spec:",
-            "  clusterSelector:",
-            "    matchLabels:",
-            "    # 'usage': 'production",
-            "      ${3: match-labels-pair}"],
-        "description": " "
-    },
-
-    "subscription": {
-        "scope": "yaml",
-        "prefix": "Subscription-v1",
-        "body": [
-            "apiVersion: apps.open-cluster-management.io/v1",
-            "kind: Subscription",
-            "metadata:",
-            "  name: ${1: app-name}",
-            "  namespace: ${2: namespace}",
-            "  labels:",
-            "    ${3: labels}",
-            "# annotations might change based on channel type",
-            "  annotations:",
-            "    apps.open-cluster-management.io/github-path: ${4: folder-path}",
-            "    apps.open-cluster-management.io/github-branch: ${5: branch}",  
-            "spec:",
-            "  channel: ${6: channel-file}",
-            "  placement:",
-            "    placementRef:",
-            "      kind: PlacementRule",
-            "      name: ${7: placement-rule-name}"
-            ],
-        "description": "Define a rule for selecting workloads clusters for workload"
-    },
-
-    "channel": {
-        "scope": "yaml",
-        "prefix": "Channel-v1",
-        "body": [
-            "# this resource is used to define the object to be deployed ",
-            "apiVersion: apps.open-cluster-management.io/v1",
-            "kind: Channel",
-            "metadata:",
-            "  name: ${1: app-name}",
-            "  namespace: ${2: namespace}",
-            "spec:",
-            "    type: Git",
-            "    pathname: ${3|Git,Helm,Object|}",
-            "# secret ref is optional. if no credentials are needed, delete this section",
-            "    secretRef:",
-            "      name: ${4: secret}" ],
-        "description": " OCM Channel"
-    }
-
+	"placement": {
+		"scope": "yaml",
+		"prefix": "Placement-v1alpha1",
+		"description": "The placement is used to select clusters from a clusterset based on pre-defined predicates.",
+		"body": [
+			"---",
+      "apiVersion: cluster.open-cluster-management.io/v1alpha1",
+			"kind: Placement",
+			"metadata:",
+			"  name: ${1: name}",
+			"  namespace: ${2: namespace}",
+			"spec:",
+			"  numberOfClusters: ${3: number-of-clusters}",
+			"  clusterSets:",
+			"     - ${4: cluster-set-name}",
+			"  predicates:",
+			"    - requiredClusterSelector:",
+			"        labelSelector:",
+			"          matchLabels:",
+			"            ${5: match-labels-pair} # usage: development",
+			"#        claimSelector:",
+			"#          matchExpressions:",
+			"#            - key: platform.open-cluster-management.io",
+			"#              operator: In",
+			"#              values:",
+			"#                - aws"
+		]
+	},
+	"managedclusterset": {
+		"scope": "yaml",
+		"prefix": "ManagedClusterSet-v1beta1",
+		"description": "The managed cluster set represents a set of clusters to select from.",
+		"body": [
+			"---",
+      "apiVersion: cluster.open-cluster-management.io/v1beta1",
+			"kind: ManagedClusterSet",
+			"metadata:",
+			"  name: ${1: name}"
+		]
+	},
+	"managedclustersetbinding": {
+		"scope": "yaml",
+		"prefix": "ManagedClusterSetBinding-v1beta1",
+		"description": "The managed clusters set binding is used to bind the managed clusters set to a namespace.",
+		"body": [
+			"---",
+      "apiVersion: cluster.open-cluster-management.io/v1beta1",
+			"kind: ManagedClusterSetBinding",
+			"metadata:",
+			"  name: ${1: name}",
+			"  namespace: ${2: namespace}",
+			"spec:",
+			"  clusterSet: ${3: clusterset}"
+		]
+	},
+	"subscription-git": {
+		"scope": "yaml",
+		"prefix": "Subscription-Git-v1",
+		"description": "A subscription for a git type channel.",
+		"body": [
+			"---",
+      "apiVersion: apps.open-cluster-management.io/v1",
+			"kind: Subscription",
+			"metadata:",
+			"  name: ${1: name}",
+			"  namespace: ${2: namespace}",
+			"  annotations:",
+			"    apps.open-cluster-management.io/github-branch: ${3: branchName}",
+			"    apps.open-cluster-management.io/github-path: ${4: branchName} # optional",
+			"    apps.open-cluster-management.io/git-clone-depth: \"${5: cloneDepth}\" # optional",
+			"    apps.open-cluster-management.io/reconcile-option: merge",
+			"    apps.open-cluster-management.io/reconcile-rate: ${6|off,low,medium,high|}",
+			"spec:",
+			"  channel: ${7: channelName}",
+			"  placement:",
+			"    placementRef:",
+			"      kind: Placement",
+			"      name: ${8: placementName}"
+		]
+	},
+	"channel": {
+		"scope": "yaml",
+		"prefix": "Channel-v1",
+		"description": "The channel configures the source of truth for the subscription.",
+		"body": [
+			"---",
+      "apiVersion: apps.open-cluster-management.io/v1",
+			"kind: Channel",
+			"metadata:",
+			"  name: ${1: name}",
+			"  namespace: ${2: namespace}",
+			"spec:",
+			"  type: ${3|Git,Helm,Object|}",
+			"  pathname: ${4: pathname}",
+			"# secret ref is optional. if no credentials are needed, delete this section",
+			"  secretRef:",
+			"    name: ${4: secretName}"
+		]
+	}
 }
-
-
-  
