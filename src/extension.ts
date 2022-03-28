@@ -12,18 +12,17 @@ const cmdNewProjectName = 'ocmNewProject';
 ######## HANDLERS #########
 #########################*/
 async function cmdNewProjectHandler() {
-	// project name defaults "ocm-application"
-	let projectFolder = await vscode.window.showInputBox({
-		placeHolder: "insert project name",
+	let projectFolder: string = await vscode.window.showInputBox({
+		placeHolder: "insert project name, default: ocm-application",
 	}) || "ocm-application";
 	// create the project folder
-	newProject.create(projectFolder);
+	await newProject.create(projectFolder);
 }
 
 /*#########################
 ####### DISPOSABLES #######
 #########################*/
-const cmdNewProjectDisposable = vscode.commands.registerCommand(
+const cmdNewProjectDisposable: vscode.Disposable = vscode.commands.registerCommand(
 	`${extName}.${cmdNewProjectName}`,
 	async () => {
 		await cmdNewProjectHandler();
