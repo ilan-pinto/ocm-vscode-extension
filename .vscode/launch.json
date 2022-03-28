@@ -12,7 +12,7 @@
 			"args": [
 				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"${workspaceFolder}/testWorkspace"
+				"${workspaceFolder}/test-workspace"
 			],
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"
@@ -27,7 +27,7 @@
 				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
-				"${workspaceFolder}/testWorkspace"
+				"${workspaceFolder}/test-workspace"
 			],
 			"outFiles": [
 				"${workspaceFolder}/out/test/**/*.js"

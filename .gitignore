@@ -1,6 +1,6 @@
 .vscode-test
 node_modules
 out
-# note the order of the next testWorkspace records
-testWorkspace/*
-!testWorkspace/.gitkeep
+# note the order of the next test-workspace records
+test-workspace/*
+!test-workspace/.gitkeep

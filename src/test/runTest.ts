@@ -5,12 +5,12 @@ import { runTests } from '@vscode/test-electron';
 async function main() {
 	try {
 		// the folder containing the extension manifest package.json, passed to `--extensionDevelopmentPath`
-		const extensionDevelopmentPath = path.resolve(__dirname, '../../');
+		const extensionDevelopmentPath: string = path.resolve(__dirname, '../../');
 		// the path to test runner, passed to --extensionTestsPath
-		const extensionTestsPath = path.resolve(__dirname, './suite/index');
+		const extensionTestsPath: string = path.resolve(__dirname, './suite/index');
 		// the workspace folder designated for testing
-		const testWorkspace = path.resolve(extensionDevelopmentPath, "testWorkspace");
-		fse.ensureDirSync(testWorkspace);
+		const testWorkspace: string = path.resolve(extensionDevelopmentPath, "test-workspace");
+		await fse.ensureDir(testWorkspace);
 		// run the integration test with latest vscode
 		await runTests({
 			extensionDevelopmentPath,
