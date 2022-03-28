@@ -13,9 +13,9 @@ async function main() {
 		fse.ensureDirSync(testWorkspace);
 		// run the integration test with latest vscode
 		await runTests({
-            extensionDevelopmentPath,
-            extensionTestsPath,
-            launchArgs: [testWorkspace]
+			extensionDevelopmentPath,
+			extensionTestsPath,
+			launchArgs: [testWorkspace]
         });
 	} catch (err) {
 		console.error('Failed to run tests');
