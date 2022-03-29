@@ -24,7 +24,23 @@
 		"snippets": [
 			{
 				"language": "yaml",
-				"path": "./snippets/cr.json"
+				"path": "./snippets/channel.json"
+			},
+			{
+				"language": "yaml",
+				"path": "./snippets/managedclusterset.json"
+			},
+			{
+				"language": "yaml",
+				"path": "./snippets/managedclustersetbinding.json"
+			},
+			{
+				"language": "yaml",
+				"path": "./snippets/placement.json"
+			},
+			{
+				"language": "yaml",
+				"path": "./snippets/subscription.json"
 			}
 		]
 	},
@@ -34,12 +50,12 @@
 		"watch": "tsc -w -p ./",
 		"lint": "eslint extension integration-tests --ext ts",
 		"clean": "rm -rf out",
-		"copy-templates": "mkdir out/templates/ && cp templates/* out/templates/",
+		"clean-ext": "rm -rf .vscode-test",
 		"preintegration-tests": "npm run compile",
 		"integration-tests": "node ./out/integration-tests/runSuite.js",
 		"prebuild": "npm run lint",
-		"build": "npm run compile && npm run copy-templates",
-		"clean-build": "npm run clean && npm run build"
+		"build": "npm run compile",
+		"clean:build": "npm run clean && npm run build"
 	},
 	"dependencies": {
 		"fs-extra": "^10.0.1"

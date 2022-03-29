@@ -2,10 +2,10 @@
 .github/**
 .vscode/**
 .vscode-test/**
-snippets/**
 extension/**
 integration-tests/**
 out/integration-tests/**
+test-workspace/**
 .editorconfig
 .eslintrc.json
 .gitignore

@@ -30,7 +30,7 @@ export async function create (projectName: string) {
 		}
 		console.debug(`created project ${projectFolder}`);
 		// prepare template folder path
-		let templatesFolder = path.resolve(__dirname,'../../');
+		let templatesFolder = path.resolve(__dirname,'../../../');
 		// copy templates to project folder
 		try {
 			await fse.copy(path.join(templatesFolder, "templates"), projectFolder);
