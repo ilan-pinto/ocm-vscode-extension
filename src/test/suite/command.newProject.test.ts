@@ -1,6 +1,7 @@
-import * as assert from 'assert';
+import { expect } from 'chai';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 
 suite('New-project command Suite', () => {
@@ -15,20 +16,42 @@ suite('New-project command Suite', () => {
 		'subscription.yaml'
 	];
 
-	test('Successful project creation', async () => {
+	test('Successfully create a project with a custom name', async () => {
 		// given the following project name and path
-		let projectFolderName: string = "successful-project";
-		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectFolderName}`);
+		let projectNameInput: string = "custom-name-project";
+		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
-		// when invoking the command with the project name
+		// given the user will input the project name
+		let inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
+		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vs-extension.ocmNewProject');
-		// await vscode.commands.executeCommand('type', {text: projectFolderName});
-		// then a folder with the project name should be created with exactly the expected files
+		// then a folder with the project name should be created
+		let pathCreated: boolean = await fse.pathExists(projectFolder);
+		expect(pathCreated).to.be.true;
+		// then the created folder should contain the expected files
 		let createdFiles: string[] = await fse.readdir(projectFolder);
-		let verifyAllAExistInB = (a: string[], b: string[]) => a.every((v: string) => b.includes(v));
-		assert.strictEqual(expectedProjectFiles.length, createdFiles.length);
-		assert.strictEqual(true, verifyAllAExistInB(expectedProjectFiles, createdFiles));
-		assert.strictEqual(true, verifyAllAExistInB(createdFiles, expectedProjectFiles));
+		expect(createdFiles).to.have.members(expectedProjectFiles);
+		// cleanups
+		inputBoxStub.restore();
+	});
+
+	test('Successfully create a project with the default name', async () => {
+		// given the default path
+		let projectFolder: string = path.resolve(__dirname, '../../../test-workspace/ocm-application');
+		// given the path doesn't already exists
+		await fse.remove(projectFolder);
+		// given the user will not input a project name (type enter)
+		let inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves("");
+		// when invoking the command
+		await vscode.commands.executeCommand('ocm-vs-extension.ocmNewProject');
+		// then a folder with the project name should be created
+		let pathCreated: boolean = await fse.pathExists(projectFolder);
+		expect(pathCreated).to.be.true;
+		// then the created folder should contain the expected files
+		let createdFiles: string[] = await fse.readdir(projectFolder);
+		expect(createdFiles).to.have.members(expectedProjectFiles);
+		// cleanups
+		inputBoxStub.restore();
 	});
 });
