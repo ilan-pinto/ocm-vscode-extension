@@ -12,7 +12,7 @@
 	"activationEvents": [
 		"onCommand:ocm-vs-extension.ocmNewProject"
 	],
-	"main": "./out/extension.js",
+	"main": "./out/extension/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -31,14 +31,14 @@
 	"scripts": {
 		"vscode:prepublish": "npm run clean-build",
 		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js",
-		"copy-files": "mkdir out/templates/ && cp templates/* out/templates/",
+		"watch": "tsc -w -p ./",
+		"lint": "eslint extension integration-tests --ext ts",
 		"clean": "rm -rf out",
+		"copy-templates": "mkdir out/templates/ && cp templates/* out/templates/",
+		"preintegration-tests": "npm run compile",
+		"integration-tests": "node ./out/integration-tests/runSuite.js",
 		"prebuild": "npm run lint",
-		"build": "npm run compile && npm run copy-files",
+		"build": "npm run compile && npm run copy-templates",
 		"clean-build": "npm run clean && npm run build"
 	},
 	"dependencies": {

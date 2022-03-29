@@ -7,7 +7,7 @@ async function main() {
 		// the folder containing the extension manifest package.json, passed to `--extensionDevelopmentPath`
 		const extensionDevelopmentPath: string = path.resolve(__dirname, '../../');
 		// the path to test runner, passed to --extensionTestsPath
-		const extensionTestsPath: string = path.resolve(__dirname, './suite/index');
+		const extensionTestsPath: string = path.resolve(__dirname, './suite');
 		// the workspace folder designated for testing
 		const testWorkspace: string = path.resolve(extensionDevelopmentPath, "test-workspace");
 		await fse.ensureDir(testWorkspace);

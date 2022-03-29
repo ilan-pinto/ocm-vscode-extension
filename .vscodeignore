@@ -3,12 +3,12 @@
 .vscode/**
 .vscode-test/**
 snippets/**
-src/**
-out/src/test/**
+extension/**
+integration-tests/**
+out/integration-tests/**
 .editorconfig
 .eslintrc.json
 .gitignore
 .vscodeignore
 tsconfig.json
-vsc-extension-quickstart.md
 **/*.ts

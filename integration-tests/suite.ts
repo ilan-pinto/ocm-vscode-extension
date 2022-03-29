@@ -9,7 +9,7 @@ export function run(): Promise<void> {
 		color: true
 	});
 
-	const testsRoot = path.resolve(__dirname, '..');
+	const testsRoot = path.resolve(__dirname, 'test-files');
 
 	return new Promise((c, e) => {
 		glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
@@ -29,9 +29,9 @@ export function run(): Promise<void> {
 						c();
 					}
 				});
-			} catch (err) {
-				console.error(err);
-				e(err);
+			} catch (mocherr) {
+				console.error(mocherr);
+				e(mocherr);
 			}
 		});
 	});
