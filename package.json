@@ -1,12 +1,18 @@
 {
-	"name": "ocm-vs-extension",
-	"displayName": "ocm-vs-extension",
-	"description": "",
+	"name": "ocm-vscode-extension",
 	"version": "0.0.1",
+	"displayName": "OCM Extension",
+	"description": "OCM VSCode extension contributing commands and snippets",
+	"license": "MIT",
+	"private": true,
+	"keywords":[
+		"ocm"
+	],
 	"engines": {
 		"vscode": "^1.65.0"
 	},
 	"categories": [
+		"Snippets",
 		"Other"
 	],
 	"activationEvents": [
