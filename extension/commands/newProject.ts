@@ -6,7 +6,8 @@ import * as path from 'path';
 export async function create (projectName: string) {
 		// verify inside workspace
 		if(vscode.workspace.workspaceFolders === undefined) {
-			vscode.window.showInformationMessage('no workspace folder, please open a project or create a workspace.');
+			console.error('no workspace folder, please open a project or create a workspace.');
+			vscode.window.showInformationMessage('no workspace folder, please open a project or create a workspace');
 			return;
 		}
 		// prepare project folder path
@@ -14,15 +15,17 @@ export async function create (projectName: string) {
 		let projectFolder: string = path.join(workspaceFolder, projectName);
 		// verify project folder doesn't exists
 		if (await fse.pathExists(projectFolder)) {
-			vscode.window.showInformationMessage(`project folder ${projectName} exists, please use another.`);
+			console.error(`project folder ${projectName} exists, please use another.`);
+			vscode.window.showInformationMessage(`project folder ${projectName} exists, please use another`);
 			return;
 		}
 		// create project folder
 		try {
 			await fse.ensureDir(projectFolder);
 		} catch (err) {
+			console.error(`failed to create project folder ${projectName}`);
 			console.error(err);
-			vscode.window.showInformationMessage(`failed to create project folder ${projectName}.`);
+			vscode.window.showInformationMessage(`failed to create project folder ${projectName}`);
 			return;
 		}
 		console.debug(`created project ${projectFolder}`);
@@ -32,9 +35,10 @@ export async function create (projectName: string) {
 		try {
 			await fse.copy(path.join(templatesFolder, "templates"), projectFolder);
 		} catch (err) {
+			console.error(`failed creating project ${projectName}`);
 			console.error(err);
 			vscode.window.showInformationMessage(`failed creating project ${projectName}`);
 			return;
 		}
-		vscode.window.showInformationMessage(`OCM project ${projectName} created.`);
+		vscode.window.showInformationMessage(`OCM project ${projectName} created`);
 	}
