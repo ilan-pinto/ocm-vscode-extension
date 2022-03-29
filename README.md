@@ -1,12 +1,12 @@
-# ocm-vs-extension README
+# ocm-vscode-extension README
 
-This is the README for your extension "ocm-vs-extension". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "ocm-vscode-extension". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
-- init clusters 
-- join clusters 
-- OCM crd snippest 
+- init clusters
+- join clusters
+- OCM crd snippest
 - create OCM project
 
 \!\[feature X\]\(images/feature-x.png\)

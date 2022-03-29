@@ -39,7 +39,7 @@ suite('New-project command Suite', () => {
 		// given the user will input the project name
 		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 		// when invoking the command
-		await vscode.commands.executeCommand('ocm-vs-extension.ocmNewProject');
+		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then a folder with the project name should be created
 		let pathCreated: boolean = await fse.pathExists(projectFolder);
 		expect(pathCreated).to.be.true;
@@ -59,7 +59,7 @@ suite('New-project command Suite', () => {
 		// given the user will not input a project name (type enter)
 		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves("");
 		// when invoking the command
-		await vscode.commands.executeCommand('ocm-vs-extension.ocmNewProject');
+		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then a folder with the project name should be created
 		let pathCreated: boolean = await fse.pathExists(projectFolder);
 		expect(pathCreated).to.be.true;
@@ -80,7 +80,7 @@ suite('New-project command Suite', () => {
 		// given the user will input the project name as the existing folder
 		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 		// when invoking the command
-		await vscode.commands.executeCommand('ocm-vs-extension.ocmNewProject');
+		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then the folder should still exist
 		let pathCreated: boolean = await fse.pathExists(projectFolder);
 		expect(pathCreated).to.be.true;
@@ -103,7 +103,7 @@ suite('New-project command Suite', () => {
 		// given the workspace api will return undefined workspaceFolders
 		let workspaceFldrStub = sinon.stub(vscode.workspace, 'workspaceFolders').value(undefined);
 		// when invoking the command
-		await vscode.commands.executeCommand('ocm-vs-extension.ocmNewProject');
+		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then the folder should not be created
 		let pathCreated: boolean = await fse.pathExists(projectFolder);
 		expect(pathCreated).to.be.false;

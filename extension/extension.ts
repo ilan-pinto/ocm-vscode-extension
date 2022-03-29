@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as newProject from './commands/newProject';
 
-const extName = 'ocm-vs-extension';
+const extName = 'ocm-vscode-extension';
 
 /*#########################
 ###### COMMAND NAMES ######
@@ -33,7 +33,7 @@ const cmdNewProjectDisposable: vscode.Disposable = vscode.commands.registerComma
 ######### EXPORTS #########
 #########################*/
 export async function activate(context: vscode.ExtensionContext) {
-	context.subscriptions.push(cmdNewProjectDisposable); // command: ocm-vs-extension.ocmNewProject
+	context.subscriptions.push(cmdNewProjectDisposable); // command: ocm-vscode-extension.ocmNewProject
 }
 
 export function deactivate() {

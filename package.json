@@ -16,13 +16,13 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:ocm-vs-extension.ocmNewProject"
+		"onCommand:ocm-vscode-extension.ocmNewProject"
 	],
 	"main": "./out/extension/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "ocm-vs-extension.ocmNewProject",
+				"command": "ocm-vscode-extension.ocmNewProject",
 				"title": "create OCM application-manager project",
 				"category": "OCM"
 			}
