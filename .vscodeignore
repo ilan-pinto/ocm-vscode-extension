@@ -2,13 +2,13 @@
 .github/**
 .vscode/**
 .vscode-test/**
-snippets/**
 src/**
-out/src/test/**
+integration-tests/**
+out/integration-tests/**
+test-workspace/**
 .editorconfig
 .eslintrc.json
 .gitignore
 .vscodeignore
 tsconfig.json
-vsc-extension-quickstart.md
 **/*.ts

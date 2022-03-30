@@ -1,0 +1,30 @@
+{
+	"placement-v1alpha1": {
+		"scope": "yaml",
+		"prefix": "OCM Placement v1alpha1",
+		"description": "The placement is used to select clusters from a clusterset based on pre-defined predicates.",
+		"body": [
+			"---",
+			"apiVersion: cluster.open-cluster-management.io/v1alpha1",
+			"kind: Placement",
+			"metadata:",
+			"  name: ${1:<placement-name>}",
+			"  namespace: ${2:<placement-namespace>}",
+			"spec:",
+			"  numberOfClusters: ${3:<number-of-clusters>}",
+			"  clusterSets:",
+			"     - ${4:<clusterset-name>}",
+			"  predicates:",
+			"    - requiredClusterSelector:",
+			"        labelSelector:",
+			"          matchLabels:",
+			"            ${5:<match-labels-pair>} # usage: development",
+			"#         claimSelector:",
+			"#           matchExpressions:",
+			"#             - key: platform.open-cluster-management.io",
+			"#               operator: In",
+			"#               values:",
+			"#                 - aws"
+		]
+	}
+}
