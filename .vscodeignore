@@ -2,7 +2,7 @@
 .github/**
 .vscode/**
 .vscode-test/**
-extension/**
+src/**
 integration-tests/**
 out/integration-tests/**
 test-workspace/**

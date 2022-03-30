@@ -8,7 +8,7 @@
 		],
 		"sourceMap": true,
 		"rootDirs": [
-			"extension",
+			"src",
 			"integration-tests"
 		],
 		"strict": true   /* enable all strict type-checking options */

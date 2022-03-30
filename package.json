@@ -18,7 +18,7 @@
 	"activationEvents": [
 		"onCommand:ocm-vscode-extension.ocmNewProject"
 	],
-	"main": "./out/extension/extension.js",
+	"main": "./out/src/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -54,7 +54,7 @@
 		"vscode:prepublish": "npm run clean-build",
 		"compile": "tsc -p ./",
 		"watch": "tsc -w -p ./",
-		"lint": "eslint extension integration-tests --ext ts",
+		"lint": "eslint src integration-tests --ext ts",
 		"clean": "rm -rf out",
 		"clean-ext": "rm -rf .vscode-test",
 		"preintegration-tests": "npm run compile",
