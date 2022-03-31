@@ -1,5 +1,5 @@
 ---
-name: Pull request tests
+name: Pull request
 
 on:
   pull_request:
@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
+      fail-fast: false
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -29,7 +30,10 @@ jobs:
       - name: Install project modules
         run: npm i
 
-      - name: Run integration tests
-        run: >
-          if [ runner.os == 'Linux' ]; then xvfb-run -a npm run integration-tests;
-          else npm run integration-tests; fi
+      - name: Run integration tests linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run integration-tests
+
+      - name: Run integration tests non-linux
+        if: runner.os != 'Linux'
+        run: npm run integration-tests
