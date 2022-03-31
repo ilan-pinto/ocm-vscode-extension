@@ -6,8 +6,8 @@ import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 
 suite('New-project command Suite', () => {
-
 	var infoBoxSpy: sinon.SinonSpy;
+	var quickPickStub: sinon.SinonStub;
 	var inputBoxStub: sinon.SinonStub;
 
 	const expectedProjectFiles: string[] = [
@@ -22,17 +22,23 @@ suite('New-project command Suite', () => {
 
 	beforeEach(() => {
 		// wrap a spy around the information box
-		infoBoxSpy = sinon.spy(vscode.window, "showInformationMessage");
+		infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage');
+		// stub the show quick pick to return git always
+		quickPickStub = sinon.stub(vscode.window, 'showQuickPick');
+		// @ts-ignore ts(2345)
+		quickPickStub.withArgs(sinon.match(['git', 'helm', 'object'])).resolves('git');
+		// TODO: currently we support only git so this can be centralized
 	});
 
 	afterEach(() => {
 		infoBoxSpy.restore(); // unwrap the information box spy
+		quickPickStub.restore(); // unwrap the quick pick stub
 		inputBoxStub.restore(); // unwrap the input box stub
 	});
 
 	test('Successfully create a project with a custom name', async () => {
 		// given the following project name and path
-		let projectNameInput: string = "custom-name-project";
+		let projectNameInput: string = 'custom-name-project';
 		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
@@ -57,7 +63,7 @@ suite('New-project command Suite', () => {
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
 		// given the user will not input a project name (type enter)
-		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves("");
+		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves('');
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then a folder with the project name should be created
@@ -73,7 +79,7 @@ suite('New-project command Suite', () => {
 
 	test('Fail creating a new project when the folder already exists', async () => {
 		// given the following project name and path
-		let projectNameInput: string = "existing-folder-name";
+		let projectNameInput: string = 'existing-folder-name';
 		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 		// given the folder already exists (with no files in it)
 		await fse.emptyDir(projectFolder);
@@ -94,7 +100,7 @@ suite('New-project command Suite', () => {
 
 	test('Fail creating a new project when not in a workspace', async () => {
 		// given the following project name and path
-		let projectNameInput: string = "non-existing-folder-name";
+		let projectNameInput: string = 'non-existing-folder-name';
 		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
