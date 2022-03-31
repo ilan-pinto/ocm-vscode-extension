@@ -1,0 +1,35 @@
+---
+name: Pull request tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  pull-requests: read
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: npm
+
+      - name: Install project modules
+        run: npm i
+
+      - name: Run integration tests
+        run: >
+          if [ runner.os == 'Linux' ]; then xvfb-run -a npm run integration-tests;
+          else npm run integration-tests; fi
