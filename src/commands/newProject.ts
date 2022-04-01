@@ -5,23 +5,32 @@ import * as path from 'path';
 
 const defaultAppName = 'ocm-application';
 
-const templateTypeGit = 'git';
-const templateTypeHelm = 'helm';
-const templateTypeObject = 'object';
+const projectTypeGit = 'Git';
+const projectTypeHelmRepo = 'HelmRepo';
+const projectTypeNamespace = 'Namespace';
+const projectTypeObjectBucket = 'ObjectBucket';
 
+// create a template project based on the user input
 export async function create () {
-	// get application type from the user
+	// get project type from the user
 	let templateType: string = await vscode.window.showQuickPick([
-		templateTypeGit,
-		templateTypeHelm,
-		templateTypeObject,
+		projectTypeGit,
+		projectTypeHelmRepo,
+		projectTypeNamespace,
+		projectTypeObjectBucket,
 	], {
-		placeHolder: 'template type, default: git',
-	}) || templateTypeGit;
+		placeHolder: `template type, default: ${projectTypeGit}`,
+	}) || projectTypeGit;
+
+	// TODO: this needs to be removed once we have templates for the rest of the types
+	if (templateType !== projectTypeGit) {
+		vscode.window.showInformationMessage(`currently ${templateType} is not yet implemented`);
+		return;
+	}
 
 	// get the project name from the user
 	let projectName: string = await vscode.window.showInputBox({
-		placeHolder: "insert project name, default: ocm-application",
+		placeHolder: `insert project name, default: ${defaultAppName}`,
 	}) || defaultAppName;
 
 	// verify inside workspace

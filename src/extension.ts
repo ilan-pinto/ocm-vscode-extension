@@ -2,29 +2,20 @@ import * as vscode from 'vscode';
 import * as newProject from './commands/newProject';
 
 const extName = 'ocm-vscode-extension';
-
-/*#########################
-###### COMMAND NAMES ######
-#########################*/
+// COMMAND NAMES
 const cmdNewProjectName = 'ocmNewProject';
 
-/*#########################
-####### DISPOSABLES #######
-#########################*/
-const cmdNewProjectDisposable: vscode.Disposable = vscode.commands.registerCommand(
-	`${extName}.${cmdNewProjectName}`,
-	async () => {
-		await newProject.create();
-	}
-);
-
-/*#########################
-######### EXPORTS #########
-#########################*/
-export async function activate(context: vscode.ExtensionContext) {
-	context.subscriptions.push(cmdNewProjectDisposable); // command: ocm-vscode-extension.ocmNewProject
+// DISPOSABLES
+function cmdNewProjectDisposable (): vscode.Disposable {
+	return vscode.commands.registerCommand(
+		`${extName}.${cmdNewProjectName}`, async () => {
+			await newProject.create();
+		}
+	);
 }
 
-export function deactivate() {
-	// no deactivate actions required
+// EXPORTS
+export async function activate(context: vscode.ExtensionContext) {
+	 // command: ocm-vscode-extension.ocmNewProject
+	context.subscriptions.push(cmdNewProjectDisposable());
 }

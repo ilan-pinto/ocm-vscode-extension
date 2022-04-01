@@ -6,11 +6,13 @@ import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 
+// Test cases for the the ocm-vscode-extension.ocmNewProject command
 suite('New-project command Suite', () => {
 	var infoBoxSpy: sinon.SinonSpy;
 	var quickPickStub: sinon.SinonStub;
 	var inputBoxStub: sinon.SinonStub;
 
+	// expected teamplate files
 	const expectedProjectFiles: string[] = [
 		'00-namespaces.yaml',
 		'README.md',
@@ -21,9 +23,10 @@ suite('New-project command Suite', () => {
 		'subscription.yaml'
 	];
 
+	// expected project types and related annotations
 	const expectedTypeAnnotations = [
 		{
-			type: 'git',
+			type: 'Git',
 			annotations: [
 				'apps.open-cluster-management.io/git-branch',
 				'apps.open-cluster-management.io/git-path',
@@ -48,9 +51,9 @@ suite('New-project command Suite', () => {
 	});
 
 	expectedTypeAnnotations.forEach(sut => {
-		test('Successfully create a project with a custom name for every type', async () => {
+		test(`Successfully create a project with a custom name for type ${sut.type}`, async () => {
 			// given the following project name and path
-			let projectNameInput: string = 'custom-name-project';
+			let projectNameInput: string = `dummy-project-name-${sut.type}`;
 			let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 			// given the path doesn't already exists
 			await fse.remove(projectFolder);
@@ -97,9 +100,9 @@ suite('New-project command Suite', () => {
 		// then a proper info message should be displayed to the user
 		let infoBoxCall: sinon.SinonSpyCall = infoBoxSpy.getCalls()[0]; // get the first call to the spy
 		expect(infoBoxCall.firstArg).to.equal('OCM project ocm-application created');
-		// then the channel resource type is the the default git type
+		// then the channel resource type is the the default Git type
 		let channelResource: any = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
-		expect(channelResource['spec']['type']).to.equal('git');
+		expect(channelResource['spec']['type']).to.equal('Git');
 	});
 
 	test('Fail creating a new project when the folder already exists', async () => {
