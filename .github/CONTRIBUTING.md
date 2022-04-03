@@ -4,8 +4,8 @@ All contributions are welcomed, thank you!
 
 ## Useful Links
 
-[Node JS Download][0]
-[VSCode API Documentation][1]
+- [Node JS Download][0]
+- [VSCode API Documentation][1]
 
 ## Development
 
