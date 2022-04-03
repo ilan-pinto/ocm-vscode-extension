@@ -30,6 +30,12 @@ jobs:
       - name: Install project modules
         run: npm i
 
+      - name: Cache vscode-test folder
+        uses: actions/cache@v3
+        with:
+          path: .vscode-test
+          key: ${{ runner.os }}-vscode-test-${{ hashFiles('**/package-lock.json') }}
+
       - name: Run integration tests linux
         if: runner.os == 'Linux'
         run: xvfb-run -a npm run integration-tests
