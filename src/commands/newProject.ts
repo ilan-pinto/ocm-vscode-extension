@@ -24,7 +24,7 @@ export async function create () {
 
 	// TODO: this needs to be removed once we have templates for the rest of the types
 	if (templateType !== projectTypeGit) {
-		vscode.window.showInformationMessage(`currently ${templateType} is not yet implemented`);
+		vscode.window.showWarningMessage(`currently ${templateType} is not yet implemented`);
 		return;
 	}
 
