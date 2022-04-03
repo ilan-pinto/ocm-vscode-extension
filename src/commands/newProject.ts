@@ -41,7 +41,8 @@ export async function create () {
 	}
 	// prepare project folder path
 	let workspaceFolder: string = vscode.workspace.workspaceFolders[0].uri.path ;
-	let projectFolder: string = path.join(workspaceFolder, projectName);
+	let projectFolder: string = path.resolve(workspaceFolder, projectName);
+
 	// verify project folder doesn't exists
 	if (await fse.pathExists(projectFolder)) {
 		console.error(`project folder ${projectName} exists, please use another.`);
@@ -59,10 +60,10 @@ export async function create () {
 	}
 	console.debug(`created project ${projectFolder}`);
 	// prepare template folder path
-	let templatesFolder = path.resolve(__dirname,'../../../templates');
+	let templatesFolder = path.resolve(__dirname, `../../../templates/${templateType}`);
 	// copy templates to project folder
 	try {
-		await fse.copy(path.join(templatesFolder, templateType), projectFolder);
+		await fse.copy(templatesFolder, projectFolder);
 	} catch (err) {
 		console.error(`failed creating project ${projectName}`);
 		console.error(err);
