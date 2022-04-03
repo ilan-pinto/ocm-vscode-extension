@@ -40,8 +40,13 @@ export async function create () {
 		return;
 	}
 	// prepare project folder path
-	let workspaceFolder: string = vscode.workspace.workspaceFolders[0].uri.path ;
-	let projectFolder: string = path.resolve(workspaceFolder, projectName);
+	let workspaceFolder: string = vscode.workspace.workspaceFolders[0].uri.path;
+	if (process.platform === 'win32') {
+		// the workspaceFolder is a uri path, it includes the initial forward slash
+		// behind the scenes, this is used to start at root, but this will not work for windows
+		workspaceFolder = workspaceFolder.substring(1);
+	}
+	let projectFolder: string = path.join(workspaceFolder, projectName);
 
 	// verify project folder doesn't exists
 	if (await fse.pathExists(projectFolder)) {
