@@ -46,7 +46,7 @@
 			},
 			{
 				"language": "yaml",
-				"path": "./snippets/subscription.json"
+				"path": "./snippets/subscription_git.json"
 			}
 		]
 	},
