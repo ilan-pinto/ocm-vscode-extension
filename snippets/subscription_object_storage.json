@@ -1,0 +1,23 @@
+{
+	"subscription-object-storage-v1": {
+		"scope": "yaml",
+		"prefix": "OCM Subscription Object Storage v1",
+		"description": "A subscription for an objectbucket type channel.",
+		"body": [
+			"---",
+			"apiVersion: apps.open-cluster-management.io/v1",
+			"kind: Subscription",
+			"metadata:",
+			"  name: ${1:<subscription-name>}",
+			"  namespace: ${2:<subscription-namespace>}",
+			"  annotations:",
+			"    apps.open-cluster-management.io/bucket-path: ${3:<bucket-path>} # optional",
+			"spec:",
+			"  channel: ${4:<channel-name>} # namespace/name",
+			"  placement:",
+			"    placementRef:",
+			"      kind: Placement",
+			"      name: ${5:<placement-name>}"
+		]
+	}
+}

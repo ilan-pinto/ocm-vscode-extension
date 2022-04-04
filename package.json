@@ -50,6 +50,14 @@
 			{
 				"language": "yaml",
 				"path": "./snippets/subscription_git.json"
+			},
+			{
+				"language": "yaml",
+				"path": "./snippets/subscription_object_storage.json"
+			},
+			{
+				"language": "yaml",
+				"path": "./snippets/subscription_helmrepo.json"
 			}
 		]
 	},
