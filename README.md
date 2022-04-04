@@ -1,10 +1,10 @@
 # OCM VScode Extension
 
-The `ocm-vscode-extension` helps you quickly create OCM managed applications.
+The `ocm-vscode-extension` helps quickly create OCM managed applications.
 
 ## Current Features
 
-- Loading OCM crd snippets from the command palette OCM
+- Loading OCM CRD snippets from the command palette OCM
 
 ![snippets-from-palette][10]
 
