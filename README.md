@@ -30,4 +30,4 @@ See our [Contributing Guidelines](.github/CONTRIBUTING.md) for more information.
 [1]: https://github.com/open-cluster-management-io/clusteradm
 <!-- GIFS -->
 [10]: https://raw.githubusercontent.com/ilan-pinto/ocm-vscode-extension/main/images/snippets-from-palette.gif
-[11]: [https://raw.githubusercontent.com/ilan-pinto/ocm-vscode-extension/main/images/new-project.gif]
+[11]: https://raw.githubusercontent.com/ilan-pinto/ocm-vscode-extension/main/images/new-project.gif
