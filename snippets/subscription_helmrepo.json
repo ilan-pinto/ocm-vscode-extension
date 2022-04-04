@@ -1,0 +1,27 @@
+{
+	"subscription-helm-repo-v1": {
+		"scope": "yaml",
+		"prefix": "OCM Subscription HelmRepo v1",
+		"description": "A subscription for a helmrepo type channel.",
+		"body": [
+			"---",
+			"apiVersion: apps.open-cluster-management.io/v1",
+			"kind: Subscription",
+			"metadata:",
+			"  name: ${1:<subscription-name>}",
+			"  namespace: ${2:<subscription-namespace>}",
+			"spec:",
+			"  channel: ${3:<channel-name>} # namespace/name",
+			"  name: ${4:<chart-name>}",
+			"  packageOverrides:",
+			"  - packageName: ${5:<package-name>}",
+			"    packageAlias: ${6:<package-alias>}",
+			"  packageFilter:",
+			"    version: ${7:\"<package-version>\"} # optional",
+			"  placement:",
+			"    placementRef:",
+			"      kind: Placement",
+			"      name: ${8:<placement-name>}"
+		]
+	}
+}
