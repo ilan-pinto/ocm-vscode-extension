@@ -17,11 +17,11 @@ All you need is [VSCode][2] and [NodeJS][0].
 
 ### Project Layout
 
-- [src](src) contains the source code for the extension.
-- [integration-tests](integration-tests) contains the sources for integration testing.
-- [snippets](snippets) contains the snippets offered by the extension.
-- [templates](templates) contains template files for orchestrating new projects.
-- [test-workspace](test-workspace) used for integration testing, git is keeping it and ignoring its content.
+- [src](../src) contains the source code for the extension.
+- [integration-tests](../integration-tests) contains the sources for integration testing.
+- [snippets](../snippets) contains the snippets offered by the extension.
+- [templates](../templates) contains template files for orchestrating new projects.
+- [test-workspace](../test-workspace) used for integration testing, git is keeping it and ignoring its content.
 
 ### NPM Scripts
 
