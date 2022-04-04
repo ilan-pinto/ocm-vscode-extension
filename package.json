@@ -6,7 +6,10 @@
 	"license": "MIT",
 	"private": true,
 	"keywords": [
-		"ocm"
+		"ocm",
+		"open-cluster-management",
+		"kubernetes",
+		"openshift"
 	],
 	"engines": {
 		"vscode": "^1.65.0"
@@ -23,7 +26,7 @@
 		"commands": [
 			{
 				"command": "ocm-vscode-extension.ocmNewProject",
-				"title": "create OCM application-manager project",
+				"title": "create an OCM application-manager project",
 				"category": "OCM"
 			}
 		],

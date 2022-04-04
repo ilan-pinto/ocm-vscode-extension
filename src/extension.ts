@@ -6,16 +6,12 @@ const extName = 'ocm-vscode-extension';
 const cmdNewProjectName = 'ocmNewProject';
 
 // DISPOSABLES
-function cmdNewProjectDisposable (): vscode.Disposable {
-	return vscode.commands.registerCommand(
-		`${extName}.${cmdNewProjectName}`, async () => {
-			await newProject.create();
-		}
-	);
-}
+const cmdNewProjectDisposable = vscode.commands.registerCommand(
+	`${extName}.${cmdNewProjectName}`, () => newProject.create()
+);
 
 // EXPORTS
-export async function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
 	 // command: ocm-vscode-extension.ocmNewProject
-	context.subscriptions.push(cmdNewProjectDisposable());
+	context.subscriptions.push(cmdNewProjectDisposable);
 }

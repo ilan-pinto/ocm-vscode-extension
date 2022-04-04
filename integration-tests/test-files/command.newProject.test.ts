@@ -12,8 +12,8 @@ suite('New-project command Suite', () => {
 	var quickPickStub: sinon.SinonStub;
 	var inputBoxStub: sinon.SinonStub;
 
-	// expected teamplate files
-	const expectedProjectFiles: string[] = [
+	// expected template files
+	const expectedProjectFiles = [
 		'00-namespaces.yaml',
 		'README.md',
 		'channel.yaml',
@@ -53,7 +53,7 @@ suite('New-project command Suite', () => {
 	expectedTypeAnnotations.forEach(sut => {
 		test(`Successfully create a project with a custom name for type ${sut.type}`, async () => {
 			// given the following project name and path
-			let projectNameInput: string = `dummy-project-name-${sut.type}`;
+			let projectNameInput = `dummy-project-name-${sut.type}`;
 			let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 			// given the path doesn't already exists
 			await fse.remove(projectFolder);
@@ -75,7 +75,7 @@ suite('New-project command Suite', () => {
 			// then the channel resource type is the expected type
 			let channelResource: any = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
 			expect(channelResource['spec']['type']).to.equal(sut.type);
-			// then the subscription resource type contains the releated annotations.
+			// then the subscription resource type contains the related annotations.
 			let subscriptionResource: any = yaml.load(await fse.readFile(`${projectFolder}/subscription.yaml`, 'utf-8'));
 			let subscriptionAnnotations = subscriptionResource['metadata']['annotations'];
 			expect(subscriptionAnnotations).to.contain.keys(sut.annotations);
@@ -107,7 +107,7 @@ suite('New-project command Suite', () => {
 
 	test('Fail creating a new project when the folder already exists', async () => {
 		// given the following project name and path
-		let projectNameInput: string = 'existing-folder-name';
+		let projectNameInput = 'existing-folder-name';
 		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 		// given the folder already exists (with no files in it)
 		await fse.emptyDir(projectFolder);
@@ -128,14 +128,14 @@ suite('New-project command Suite', () => {
 
 	test('Fail creating a new project when not in a workspace', async () => {
 		// given the following project name and path
-		let projectNameInput: string = 'non-existing-folder-name';
+		let projectNameInput = 'non-existing-folder-name';
 		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
 		// given the user will input the project name as the existing folder
 		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 		// given the workspace api will return undefined workspaceFolders
-		let workspaceFldrStub = sinon.stub(vscode.workspace, 'workspaceFolders').value(undefined);
+		let workspaceFolderStub = sinon.stub(vscode.workspace, 'workspaceFolders').value(undefined);
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then the folder should not be created
@@ -145,6 +145,6 @@ suite('New-project command Suite', () => {
 		let infoBoxCall: sinon.SinonSpyCall = infoBoxSpy.getCalls()[0]; // get the first call to the spy
 		expect(infoBoxCall.firstArg).to.equal('no workspace folder, please open a project or create a workspace');
 		// unwrap the workspace folders stub
-		workspaceFldrStub.restore();
+		workspaceFolderStub.restore();
 	});
 });
