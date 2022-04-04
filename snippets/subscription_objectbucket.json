@@ -1,7 +1,7 @@
 {
 	"subscription-object-storage-v1": {
 		"scope": "yaml",
-		"prefix": "OCM Subscription Object Storage v1",
+		"prefix": "OCM Subscription ObjectBucket v1",
 		"description": "A subscription for an objectbucket type channel.",
 		"body": [
 			"---",

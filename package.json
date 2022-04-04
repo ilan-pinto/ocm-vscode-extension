@@ -53,7 +53,7 @@
 			},
 			{
 				"language": "yaml",
-				"path": "./snippets/subscription_object_storage.json"
+				"path": "./snippets/subscription_objectbucket.json"
 			},
 			{
 				"language": "yaml",

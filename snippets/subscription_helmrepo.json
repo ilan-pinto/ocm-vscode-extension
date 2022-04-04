@@ -1,7 +1,7 @@
 {
 	"subscription-helm-repo-v1": {
 		"scope": "yaml",
-		"prefix": "OCM Subscription Helm repo v1",
+		"prefix": "OCM Subscription HelmRepo v1",
 		"description": "A subscription for a helmrepo type channel.",
 		"body": [
 			"---",
