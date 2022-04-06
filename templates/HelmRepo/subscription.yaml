@@ -8,8 +8,6 @@ spec:
   packageOverrides:
     - packageName: <package_name>
       packageAlias: <package_alias>
-  packageFilter:
-    version: "<package_version>"
   placement:
     placementRef:
       kind: Placement
