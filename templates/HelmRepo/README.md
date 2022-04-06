@@ -1,4 +1,4 @@
-# OCM Git-type Application Lifecycle Project
+# OCM HelmRepo-type Application Lifecycle Project
 
 Applying these resource files will create the following resources:
 
