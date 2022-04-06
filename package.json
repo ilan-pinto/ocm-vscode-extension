@@ -28,8 +28,12 @@
 		"Snippets",
 		"Other"
 	],
+	"icon": "./src/img/icm-icon-black.png",
 	"activationEvents": [
-		"onCommand:ocm-vscode-extension.ocmNewProject"
+		"onCommand:ocm-vscode-extension.ocmNewProject",
+		"onCommand:ocm-vscode-extension.clusteradmVersion",
+		"onCommand:ocm-vscode-extension.validateEnvPrereq",
+		"onView:ocm.explorer"
 	],
 	"main": "./out/src/extension.js",
 	"contributes": {
@@ -38,8 +42,71 @@
 				"command": "ocm-vscode-extension.ocmNewProject",
 				"title": "create an OCM application-manager project",
 				"category": "OCM"
+			},
+			{
+				"command": "ocm-vscode-extension.clusteradmVersion",
+				"title": "check clusteradm version",
+				"category": "OCM"
+			},
+			{
+				"command": "ocm-vscode-extension..validateEnvPrereq",
+				"title": "validate local env prerequisites",
+				"category": "OCM"
 			}
 		],
+		"viewsContainers": {
+			"activitybar": [
+			  {
+				"id": "ocmView",
+				"title": "OCM",
+				"icon": "src/img/ocm-icon-black.svg"
+			  }
+			]
+		  },
+		  "views": {
+			"ocmView": [
+				{
+					"id": "forDevelopers",
+					"name": "Developers Tools"
+			  },
+			  {
+				"id": "managedClustersExplorer",
+				"name": "Managed Clusters Explorer"
+			  },
+			  {
+				"id": "hubClustersExplorer",
+				"name": "Hub Clusters Explorer"
+			  },
+			  {
+				"id": "deployedApplication",
+				"name": "Deployed Application"
+			  }
+
+			]
+			
+		  },
+		"viewsWelcome": [
+			{
+				"view" : "forDevelopers", 
+				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.clusteradmVersion)\n [Validate Env Prerequisites](command:ocm-vscode-extension.validateEnvPrereq) \n[Start Local Kind Cluster](command:ocm-vscode-extension.clusteradmVersion)  "
+			}
+		],  
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "ocm-vscode-extension.clusteradmVersion",
+					"when": "view == forDevelopers"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "ocm-vscode-extension.ocmNewProject",
+                    "when": "view == ocmView && viewItem == createProject"
+
+
+				}
+			]
+		},
 		"snippets": [
 			{
 				"language": "yaml",
@@ -88,7 +155,9 @@
 		"vsce:package": "vsce package"
 	},
 	"dependencies": {
-		"fs-extra": "^10.0.1"
+		"@types/shelljs": "^0.8.11",
+		"fs-extra": "^10.0.1",
+		"shelljs": "0.8.5"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.3.0",
