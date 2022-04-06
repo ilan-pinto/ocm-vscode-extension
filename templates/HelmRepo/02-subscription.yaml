@@ -1,10 +1,10 @@
 apiVersion: apps.open-cluster-management.io/v1
 kind: Subscription
 metadata:
-  name: helloworld-helm-sub
-  namespace: helloworld-helm
+  name: helloworld-subscription
+  namespace: helloworld-app
 spec:
-  channel: helloworld-helm-ch/helloworld-helm-channel
+  channel: helloworld-chn/helloworld-channel
   packageOverrides:
     - packageName: <package_name>
       packageAlias: <package_alias>
@@ -13,4 +13,4 @@ spec:
   placement:
     placementRef:
       kind: Placement
-      name: helloworld-helm-placement
+      name: helloworld-placement
