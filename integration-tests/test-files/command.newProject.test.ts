@@ -6,6 +6,11 @@ import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 
+interface ExpectedTemplate {
+	channelType: string,
+	verifySubscription: CallableFunction
+}
+
 // Test cases for the the ocm-vscode-extension.ocmNewProject command
 suite('New-project command Suite', () => {
 	var infoBoxSpy: sinon.SinonSpy;
@@ -13,7 +18,7 @@ suite('New-project command Suite', () => {
 	var inputBoxStub: sinon.SinonStub;
 
 	// expected template files
-	const expectedProjectFiles = [
+	const expectedTemplateFiles = [
 		'00-namespaces.yaml',
 		'README.md',
 		'channel.yaml',
@@ -23,17 +28,19 @@ suite('New-project command Suite', () => {
 		'subscription.yaml'
 	];
 
-	// expected project types and related annotations
-	const expectedTypeAnnotations = [
+	// expected template types and verification functions
+	const expectedTemplates: ExpectedTemplate[] = [
 		{
-			type: 'Git',
-			annotations: [
-				'apps.open-cluster-management.io/git-branch',
-				'apps.open-cluster-management.io/git-path',
-				'apps.open-cluster-management.io/git-tag',
-				'apps.open-cluster-management.io/git-desired-commit',
-				'apps.open-cluster-management.io/git-clone-depth',
-			]
+			channelType: 'Git',
+			verifySubscription: verifyGitSubscription
+		},
+		{
+			channelType: 'HelmRepo',
+			verifySubscription: verifyHelmRepoSubscription
+		},
+		{
+			channelType: 'ObjectBucket',
+			verifySubscription: verifyObjectBucketSubscription
 		}
 	];
 
@@ -50,15 +57,15 @@ suite('New-project command Suite', () => {
 		inputBoxStub.restore(); // unwrap the input box stub
 	});
 
-	expectedTypeAnnotations.forEach(sut => {
-		test(`Successfully create a project with a custom name for type ${sut.type}`, async () => {
+	expectedTemplates.forEach(sut => {
+		test(`Successfully create a project with a custom name for type ${sut.channelType}`, async () => {
 			// given the following project name and path
-			let projectNameInput = `dummy-project-name-${sut.type}`;
+			let projectNameInput = `dummy-project-name-${sut.channelType}`;
 			let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 			// given the path doesn't already exists
 			await fse.remove(projectFolder);
 			// given the user will select the sut type in the pick box
-			quickPickStub.resolves(sut.type);
+			quickPickStub.resolves(sut.channelType);
 			// given the user will input the project name
 			inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 			// when invoking the command
@@ -68,17 +75,16 @@ suite('New-project command Suite', () => {
 			expect(pathCreated).to.be.true;
 			// then the created folder should contain the expected files
 			let createdFiles: string[] = await fse.readdir(projectFolder);
-			expect(createdFiles).to.have.members(expectedProjectFiles);
+			expect(createdFiles).to.have.members(expectedTemplateFiles);
 			// then a proper info message should be displayed to the user
 			let infoBoxCall: sinon.SinonSpyCall = infoBoxSpy.getCalls()[0]; // get the first call to the spy
 			expect(infoBoxCall.firstArg).to.equal(`OCM project ${projectNameInput} created`);
 			// then the channel resource type is the expected type
 			let channelResource: any = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
-			expect(channelResource['spec']['type']).to.equal(sut.type);
+			expect(channelResource['spec']['type']).to.equal(sut.channelType);
 			// then the subscription resource type contains the related annotations.
 			let subscriptionResource: any = yaml.load(await fse.readFile(`${projectFolder}/subscription.yaml`, 'utf-8'));
-			let subscriptionAnnotations = subscriptionResource['metadata']['annotations'];
-			expect(subscriptionAnnotations).to.contain.keys(sut.annotations);
+			sut.verifySubscription(subscriptionResource);
 		});
 	});
 
@@ -96,7 +102,7 @@ suite('New-project command Suite', () => {
 		expect(pathCreated).to.be.true;
 		// then the created folder should contain the expected files
 		let createdFiles: string[] = await fse.readdir(projectFolder);
-		expect(createdFiles).to.have.members(expectedProjectFiles);
+		expect(createdFiles).to.have.members(expectedTemplateFiles);
 		// then a proper info message should be displayed to the user
 		let infoBoxCall: sinon.SinonSpyCall = infoBoxSpy.getCalls()[0]; // get the first call to the spy
 		expect(infoBoxCall.firstArg).to.equal('OCM project ocm-application created');
@@ -147,4 +153,58 @@ suite('New-project command Suite', () => {
 		// unwrap the workspace folders stub
 		workspaceFolderStub.restore();
 	});
+
+	/* ############################# ##
+	## Template Verification Helpers ##
+	## ############################# ##*/
+	function verifyGitSubscription(subscriptionYaml: any): void {
+		// verify kind
+		expect(subscriptionYaml['kind']).to.equal('Subscription');
+		// verify metadata keys
+		expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
+		// verify metadata annotations
+		let expectedAnnotationKeys = [
+			'apps.open-cluster-management.io/git-branch',
+			'apps.open-cluster-management.io/git-path',
+			'apps.open-cluster-management.io/git-tag',
+			'apps.open-cluster-management.io/git-desired-commit',
+			'apps.open-cluster-management.io/git-clone-depth',
+			'apps.open-cluster-management.io/reconcile-option',
+			'apps.open-cluster-management.io/reconcile-rate'
+		];
+		let existingAnnotations = subscriptionYaml['metadata']['annotations'];
+		expect(existingAnnotations).to.have.keys(expectedAnnotationKeys);
+	}
+
+	function verifyHelmRepoSubscription(subscriptionYaml: any): void {
+		// verify kind
+		expect(subscriptionYaml['kind']).to.equal('Subscription');
+		// verify metadata keys
+		expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
+		// verify metadata annotations
+		let expectedAnnotationKeys = [
+			'apps.open-cluster-management.io/reconcile-option',
+			'apps.open-cluster-management.io/reconcile-rate'
+		];
+		let existingAnnotations = subscriptionYaml['metadata']['annotations'];
+		expect(existingAnnotations).to.have.keys(expectedAnnotationKeys);
+		// verify spec packageOverrides
+		let packageOverrides = subscriptionYaml['spec']['packageOverrides'][0];
+		expect(packageOverrides).to.contain.keys(['packageName', 'packageAlias']);
+	}
+
+	function verifyObjectBucketSubscription(subscriptionYaml: any): void {
+		// verify kind
+		expect(subscriptionYaml['kind']).to.equal('Subscription');
+		// verify metadata keys
+		expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
+		// verify metadata annotations
+		let expectedAnnotationKeys = [
+			'apps.open-cluster-management.io/bucket-path',
+			'apps.open-cluster-management.io/reconcile-option',
+			'apps.open-cluster-management.io/reconcile-rate'
+		];
+		let existingAnnotations = subscriptionYaml['metadata']['annotations'];
+		expect(existingAnnotations).to.have.keys(expectedAnnotationKeys);
+	}
 });
