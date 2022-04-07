@@ -1,16 +1,18 @@
-import * as valid from '../utils/clusteradm'; 
+import * as valid from '../utils/clusteradm';
 import * as vscode from 'vscode';
 
 
-//validate local env prerequisites 
+//validate local env prerequisites
 export function validatePrereq() {
 
-    const mandatoryCommands = ['kubectl', 'clusteradm','kind' ]; 
-    const optionalCommands = ['oc']; 
+    const mandatoryCommands = ['kubectl', 'clusteradm','kind' ];
+    const optionalCommands = ['oc'];
 
-    for (const command of mandatoryCommands) {    
-        if (valid.checkCommandExists(command) === false) {
-            vscode.window.showErrorMessage( command + " command doesn't exists."  );
-        }; 
+    for (let cmd of mandatoryCommands) {
+        valid.checkCommandExists(
+			cmd,
+			(c: string) => vscode.window.showInformationMessage(`ocm extension found command ${c}`),
+			(c: string) => vscode.window.showInformationMessage(`ocm extension did not found command ${c}`)
+		);
     }
 }
