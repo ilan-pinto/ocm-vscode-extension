@@ -13,7 +13,13 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            target: darwin-x64
+          - os: ubuntu-latest
+            target: linux-x64
+          - os: windows-latest
+            target: win32-x64
       fail-fast: false
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -43,3 +49,7 @@ jobs:
       - name: Run integration tests non-linux
         if: runner.os != 'Linux'
         run: npm run integration-tests
+
+      - name: Create a VSIX package for target ${{ matrix.target }}
+        run: |
+          npm run vsce:package --target ${{ matrix.target }}
