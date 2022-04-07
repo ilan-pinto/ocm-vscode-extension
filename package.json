@@ -4,7 +4,7 @@
 	"displayName": "OCM Extension",
 	"description": "OCM VSCode extension contributing commands and snippets",
 	"publisher": "redhat-ecosystem-application-engineering",
-	"license": "MIT",
+	"license": "SEE LICENSE IN LICENSE",
 	"homepage": "https://github.com/ilan-pinto/ocm-vscode-extension/blob/main/README.md",
 	"bugs": {
 		"url": "https://github.com/ilan-pinto/ocm-vscode-extension/issues"
