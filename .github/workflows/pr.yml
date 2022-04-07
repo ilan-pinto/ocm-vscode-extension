@@ -52,4 +52,4 @@ jobs:
 
       - name: Create a VSIX package for target ${{ matrix.target }}
         run: |
-          npm run vsce:package --target ${{ matrix.target }}
+          npm run vsce:package -- --target ${{ matrix.target }}
