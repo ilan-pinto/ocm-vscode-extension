@@ -7,26 +7,18 @@ const defaultAppName = 'ocm-application';
 
 const projectTypeGit = 'Git';
 const projectTypeHelmRepo = 'HelmRepo';
-const projectTypeNamespace = 'Namespace';
 const projectTypeObjectBucket = 'ObjectBucket';
 
 // create a template project based on the user input
-export async function create () {
+export async function create() {
 	// get project type from the user
 	let templateType: string = await vscode.window.showQuickPick([
 		projectTypeGit,
 		projectTypeHelmRepo,
-		projectTypeNamespace,
 		projectTypeObjectBucket,
 	], {
 		placeHolder: `template type, default: ${projectTypeGit}`,
 	}) || projectTypeGit;
-
-	// TODO: this needs to be removed once we have templates for the rest of the types
-	if (templateType !== projectTypeGit) {
-		vscode.window.showWarningMessage(`currently ${templateType} is not yet implemented`);
-		return;
-	}
 
 	// get the project name from the user
 	let projectName: string = await vscode.window.showInputBox({
@@ -34,7 +26,7 @@ export async function create () {
 	}) || defaultAppName;
 
 	// verify inside workspace
-	if(vscode.workspace.workspaceFolders === undefined) {
+	if (vscode.workspace.workspaceFolders === undefined) {
 		console.error('no workspace folder, please open a project or create a workspace.');
 		vscode.window.showInformationMessage('no workspace folder, please open a project or create a workspace');
 		return;
