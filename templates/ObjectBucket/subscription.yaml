@@ -4,6 +4,8 @@ kind: Subscription
 metadata:
   annotations:
     apps.open-cluster-management.io/bucket-path: <bucket-path> # optional
+    apps.open-cluster-management.io/reconcile-option: merge # optional can be replace/merge
+    apps.open-cluster-management.io/reconcile-rate: medium # optional, can be off/low/medium/high
   name: helloworld-subscription
   namespace: helloworld-app
 spec:

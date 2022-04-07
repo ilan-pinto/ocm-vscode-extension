@@ -5,5 +5,5 @@ metadata:
   name: helloworld-channel
   namespace: helloworld-chn
 spec:
-  type: HelmRepo
-  pathname: https://github.com/<user-or-org>/<repo-name>
+  type: ObjectBucket
+  pathname: https://address-of-bucket>/helloworld-channel # bucket name should matche the CR name
