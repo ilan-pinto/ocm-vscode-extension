@@ -3,7 +3,30 @@
 	"version": "0.0.1",
 	"displayName": "OCM Extension",
 	"description": "OCM VSCode extension contributing commands and snippets",
+	"publisher": "redhat-ecosystem-application-engineering",
 	"license": "MIT",
+	"homepage": "https://github.com/ilan-pinto/ocm-vscode-extension/blob/main/README.md",
+	"bugs": {
+		"url": "https://github.com/ilan-pinto/ocm-vscode-extension/issues"
+	},
+	"contributors": [
+		{
+			"name": "Ilan Pinto",
+			"email": "ilpinto@redhat.com",
+			"url": "http://barnyrubble.tumblr.com/"
+		},
+		{
+			"name": "Tomer Figenblat",
+			"email": "tfigenbl@redhat.com",
+			"url": "https://google.com"
+		},
+		{
+			"name": "Vladimir Belousov",
+			"email": "vbelouso@redhat.com",
+			"url": "https://google.com"
+		}
+	],
+	"icon": "images/icon.png",
 	"private": true,
 	"keywords": [
 		"ocm",
@@ -11,6 +34,10 @@
 		"kubernetes",
 		"openshift"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ilan-pinto/ocm-vscode-extension.git"
+	},
 	"engines": {
 		"vscode": "^1.65.0"
 	},
@@ -62,7 +89,7 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run clean-build",
+		"vscode:prepublish": "npm run clean:build",
 		"compile": "tsc -p ./",
 		"watch": "tsc -w -p ./",
 		"lint": "eslint src integration-tests --ext ts",
