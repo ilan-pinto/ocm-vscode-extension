@@ -9,23 +9,6 @@
 	"bugs": {
 		"url": "https://github.com/ilan-pinto/ocm-vscode-extension/issues"
 	},
-	"contributors": [
-		{
-			"name": "Ilan Pinto",
-			"email": "ilpinto@redhat.com",
-			"url": "http://barnyrubble.tumblr.com/"
-		},
-		{
-			"name": "Tomer Figenblat",
-			"email": "tfigenbl@redhat.com",
-			"url": "https://google.com"
-		},
-		{
-			"name": "Vladimir Belousov",
-			"email": "vbelouso@redhat.com",
-			"url": "https://google.com"
-		}
-	],
 	"icon": "images/icon.png",
 	"private": true,
 	"keywords": [
