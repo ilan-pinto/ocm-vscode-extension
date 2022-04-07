@@ -1,0 +1,99 @@
+---
+name: Stage
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  package:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            target: darwin-x64
+          - os: ubuntu-latest
+            target: linux-x64
+          - os: windows-latest
+            target: win32-x64
+    name: Create a package for target ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: npm
+
+      - name: Install project modules
+        run: npm i
+
+      - name: Create a VSIX package for target ${{ matrix.target }}
+        run: |
+          npm run vsce:package -- --target ${{ matrix.target }}
+
+      - name: Upload the VSIX package
+        uses: actions/upload-artifact@v3
+        with:
+          name: vsix
+          path: ./*.vsix
+
+  release:
+    runs-on: ubuntu-latest
+    name: Create an Early-access release
+    needs: package
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download all VSIX packages
+        uses: actions/download-artifact@v3
+        with:
+          name: vsix
+          path: ./vsix
+
+      - name: Check for existing EA release
+        id: existing_release
+        uses: actions/github-script@v6
+        continue-on-error: true
+        with:
+          script: |
+            const repo_name = context.payload.repository.full_name
+            var response = await github.request('GET /repos/' + repo_name + '/releases/tags/early-access')
+            // if the request fails this output will not be set
+            core.setOutput('id', response.data.id)
+
+      - name: Delete existing EA release if exists
+        if: ${{ steps.existing_release.outputs.id }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const repo_name = context.payload.repository.full_name
+            await github.request('DELETE /repos/' + repo_name + '/releases/' + ${{ steps.existing_release.outputs.id }})
+
+      - name: Delete EA tag if exists
+        continue-on-error: true
+        run: git push --delete origin early-access
+
+      - name: Create an EA release
+        id: new_release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const repo_name = context.payload.repository.full_name
+            const response = await github.request('POST /repos/' + repo_name + '/releases', {
+              tag_name: 'early-access',
+              name: 'Early-access',
+              prerelease: true,
+              generate_release_notes: true
+            })
+            core.setOutput('id', response.data.id)
+
+# NOT DONE YET
+# NEED TO UPLOAD VSIX PACKAGES AS ASSETS TO RELEASE WITH ID ${{ steps.new_release.outputs.id }}
