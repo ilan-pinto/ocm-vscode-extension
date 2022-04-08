@@ -2,6 +2,7 @@
 name: Stage
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -69,7 +70,7 @@ jobs:
             // if the request fails this output will not be set
             core.setOutput('id', response.data.id)
 
-      - name: Delete existing EA release if exists
+      - name: Delete EA release if exists
         if: ${{ steps.existing_release.outputs.id }}
         uses: actions/github-script@v6
         with:
@@ -93,7 +94,16 @@ jobs:
               prerelease: true,
               generate_release_notes: true
             })
-            core.setOutput('id', response.data.id)
+            core.setOutput('upload_url', response.data.upload_url)
 
-# NOT DONE YET
-# NEED TO UPLOAD VSIX PACKAGES AS ASSETS TO RELEASE WITH ID ${{ steps.new_release.outputs.id }}
+      - name: Upload EA release assets
+        run: |
+          for pkg in ./vsix/*
+          do
+            asset_name=$(basename $pkg)
+            upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")
+            curl --data-binary @"$pkg" \
+            -H "Authorization: token ${{ github.token }}" \
+            -H "Content-Type: application/octet-stream" \
+            $upload_url
+          done
