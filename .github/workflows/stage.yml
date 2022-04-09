@@ -37,7 +37,7 @@ jobs:
         run: |
           npm run vsce:package -- --target ${{ matrix.target }}
 
-      - name: Upload the VSIX package
+      - name: Upload the VSIX package for target ${{ matrix.target }}
         uses: actions/upload-artifact@v3
         with:
           name: vsix
@@ -67,7 +67,7 @@ jobs:
           script: |
             const repo_name = context.payload.repository.full_name
             var response = await github.request('GET /repos/' + repo_name + '/releases/tags/early-access')
-            // if the request fails this output will not be set
+            // if the request fails (ie 404) the next steps will occur and the output will not be set
             core.setOutput('id', response.data.id)
 
       - name: Delete EA release if exists
@@ -82,7 +82,7 @@ jobs:
         continue-on-error: true
         run: git push --delete origin early-access
 
-      - name: Create an EA release
+      - name: Create a new EA release
         id: new_release
         uses: actions/github-script@v6
         with:
