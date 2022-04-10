@@ -18,15 +18,12 @@ export function checkClusteradmVersion(){
     });
 }
 
-export  function checkCommandExists(
-	command: string, onSuccess: CallableFunction, onError: CallableFunction): void {
+export  function checkCommandExists(command: string, ): void {
 
-	shell.exec(`command -v ${command}`,function( code, stdout, stderr ): boolean {
+	shell.exec(`command -v ${command}`,function( code, stdout, stderr ): Promise<Boolean> {
         if (code === 0 ){
-            onSuccess(command);
-            return true;
-        }
-        onError(command);
-        return false;
+            return Promise.resolve(true);
+        }        
+        return Promise.reject(false);
     });
 }
