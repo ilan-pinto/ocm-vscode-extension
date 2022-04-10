@@ -1,5 +1,4 @@
 import * as shell from 'shelljs' ;
-import { callbackify } from 'util';
 import * as vscode from 'vscode';
 
 const successful = 1;
@@ -18,12 +17,12 @@ export function checkClusteradmVersion(){
     });
 }
 
-export  function checkCommandExists(command: string, ): void {
-
-	shell.exec(`command -v ${command}`,function( code, stdout, stderr ): Promise<Boolean> {
-        if (code === 0 ){
-            return Promise.resolve(true);
-        }        
-        return Promise.reject(false);
-    });
+export  function checkCommandExists(command: string): Promise<void> {
+	return new Promise((resolve, reject) => {
+		let execution = shell.exec(`command -v ${command}`);
+		if (execution.code !== 0) {
+			reject();
+		}
+		resolve();
+	});
 }
