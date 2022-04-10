@@ -30,7 +30,11 @@ All you need is [VSCode][2] and [NodeJS][0].
 - `npm run build` will lint and compile the project.
 - `npm run clean:build` will remove any pre-compiled sources before building.
 - `npm run integration-tests` will run the integration tests.
+- `npm run clean` will remove the compiled sources
 - `npm run clean-ext` will clean _vscode_'s extension testing folder (.vscode-test).
+- `npm run clean-test-ws` will clean all content from the testing folder (test-workspace) excluding _.gitkeep_.
+- `npm run clean:all` will execute the above three clean scripts.
+- `npm run vsce:package` will build the VSIX package.
 
 ### Launch Configurations
 

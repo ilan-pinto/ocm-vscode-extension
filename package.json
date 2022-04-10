@@ -78,6 +78,8 @@
 		"lint": "eslint src integration-tests --ext ts",
 		"clean": "rm -rf out",
 		"clean-ext": "rm -rf .vscode-test",
+		"clean-test-ws": "find ./test-workspace/ -mindepth 1  ! -name '.gitkeep' -delete",
+		"clean:all":"npm run clean && npm run clean-ext && npm run clean-test-ws",
 		"preintegration-tests": "npm run compile",
 		"integration-tests": "node ./out/integration-tests/runSuite.js",
 		"prebuild": "npm run lint",
