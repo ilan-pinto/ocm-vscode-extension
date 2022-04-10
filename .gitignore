@@ -4,3 +4,4 @@ out
 # note the order of the next test-workspace records
 test-workspace/*
 !test-workspace/.gitkeep
+**/*.vsix

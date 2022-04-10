@@ -23,11 +23,12 @@ The `ocm-vscode-extension` helps quickly create OCM managed applications.
 
 ## Contributing
 
-See our [Contributing Guidelines](.github/CONTRIBUTING.md) for more information.
+See our [Contributing Guidelines][2] for more information.
 
 <!-- LINKS -->
 [0]: https://open-cluster-management.io/getting-started/integration/app-lifecycle/
 [1]: https://github.com/open-cluster-management-io/clusteradm
+[2]: https://github.com/ilan-pinto/ocm-vscode-extension/contribute
 <!-- GIFS -->
 [10]: https://raw.githubusercontent.com/ilan-pinto/ocm-vscode-extension/main/images/snippets-from-palette.gif
 [11]: https://raw.githubusercontent.com/ilan-pinto/ocm-vscode-extension/main/images/new-project.gif

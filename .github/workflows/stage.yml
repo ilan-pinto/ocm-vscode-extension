@@ -1,0 +1,120 @@
+---
+name: Stage
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - ".github/**"
+
+jobs:
+  package:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            target: darwin-x64
+          - os: ubuntu-latest
+            target: linux-x64
+          - os: windows-latest
+            target: win32-x64
+    name: Create a VSIX package for target ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: npm
+
+      - name: Install project modules
+        run: npm i
+
+      - name: Create VSIX package
+        run: |
+          npm run vsce:package -- --target ${{ matrix.target }}
+
+      - name: Upload VSIX package as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: vsix
+          path: ./*.vsix
+
+  release:
+    runs-on: ubuntu-latest
+    name: Create an Early-access release
+    needs: package
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download VSIX package artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: vsix
+          path: ./vsix
+
+      - name: Check for existing EA release
+        id: existing_release
+        uses: actions/github-script@v6
+        continue-on-error: true
+        with:
+          script: |
+            const repo_name = context.payload.repository.full_name
+            var response = await github.request('GET /repos/' + repo_name + '/releases/tags/early-access')
+            // if the request fails (ie 404) the next steps will not occur and the output will not be set
+            core.setOutput('id', response.data.id)
+
+      - name: Delete EA release if exists
+        if: ${{ steps.existing_release.outputs.id }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const repo_name = context.payload.repository.full_name
+            await github.request('DELETE /repos/' + repo_name + '/releases/' + ${{ steps.existing_release.outputs.id }})
+
+      - name: Delete EA tag if exists
+        continue-on-error: true
+        run: git push --delete origin early-access
+
+      - name: Create new EA release
+        id: new_release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const repo_name = context.payload.repository.full_name
+            const response = await github.request('POST /repos/' + repo_name + '/releases', {
+              tag_name: 'early-access',
+              name: 'Early-access',
+              prerelease: true,
+              generate_release_notes: true
+            })
+            core.setOutput('upload_url', response.data.upload_url)
+
+      - name: Create SHA256 checksums for the VSIX packages
+        working-directory: vsix
+        run: |
+          for pkg in *.vsix
+          do
+            sha_file=$(echo $pkg | sed 's/\.vsix/\.sha256/g')
+            sha256sum $pkg > $sha_file
+          done
+
+      - name: Upload packages and checksums as EA release assets
+        run: |
+          for file in ./vsix/*.{vsix,sha256}
+          do
+            asset_name=$(basename $file)
+            upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")
+            curl --data-binary @"$file" \
+            -H "Authorization: token ${{ github.token }}" \
+            -H "Content-Type: application/octet-stream" \
+            $upload_url
+          done
