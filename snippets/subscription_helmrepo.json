@@ -10,18 +10,19 @@
 			"metadata:",
 			"  name: ${1:<subscription-name>}",
 			"  namespace: ${2:<subscription-namespace>}",
+			"  annotations:",
+			"    apps.open-cluster-management.io/reconcile-option: ${3|merge,replace|} # optional",
+			"    apps.open-cluster-management.io/reconcile-rate: ${4|medium,low,high,off|} # optional",
 			"spec:",
-			"  channel: ${3:<channel-name>} # namespace/name",
-			"  name: ${4:<chart-name>}",
+			"  channel: ${5:<channel-name>} # namespace/name",
+			"  name: ${6:<chart-name>}",
 			"  packageOverrides:",
-			"  - packageName: ${5:<package-name>}",
-			"    packageAlias: ${6:<package-alias>}",
-			"  packageFilter:",
-			"    version: ${7:\"<package-version>\"} # optional",
+			"  - packageName: ${7:<package-name>}",
+			"    packageAlias: ${8:<package-alias>}",
 			"  placement:",
 			"    placementRef:",
 			"      kind: Placement",
-			"      name: ${8:<placement-name>}"
+			"      name: ${9:<placement-name>}"
 		]
 	}
 }

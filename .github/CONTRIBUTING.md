@@ -9,6 +9,8 @@ All contributions are welcomed, thank you!
 
 ## Development
 
+Early-access pre-release is available [here][3] and will always reflect the current development snapshot from the _main_ branch.
+
 ### Environment Preparations
 
 All you need is [VSCode][2] and [NodeJS][0].
@@ -45,6 +47,7 @@ All you need is [VSCode][2] and [NodeJS][0].
 [0]: https://nodejs.org
 [1]: https://code.visualstudio.com/api
 [2]: https://code.visualstudio.com/
+[3]: https://github.com/ilan-pinto/ocm-vscode-extension/releases/tag/early-access
 <!-- CODE LINKS -->
 [10]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/src
 [11]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/integration-tests
