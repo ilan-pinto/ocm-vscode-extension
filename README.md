@@ -4,11 +4,11 @@ The `ocm-vscode-extension` helps quickly create OCM managed applications.
 
 ## Current Features
 
-- Loading CR snippets from the command palette.
+- Loading CR snippets from the command palette
 
 ![snippets-from-palette][10]
 
-- Create a new project for the various channel types.
+- Create a new project for the various channel types
 
 ![new-project][11]
 
@@ -26,7 +26,7 @@ In your _vscode_ instance, select the _Extensions_ view container (ctrl+shift+x)
 ## Road Map
 
 - Execute [clusteradm][1] commands.
-- Query hub/managed cluster resources
+- Query hub/managed cluster resources.
 
 ## Contributing
 
