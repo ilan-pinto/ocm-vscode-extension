@@ -12,12 +12,14 @@
 			"  namespace: ${2:<subscription-namespace>}",
 			"  annotations:",
 			"    apps.open-cluster-management.io/bucket-path: ${3:<bucket-path>} # optional",
+			"    apps.open-cluster-management.io/reconcile-option: ${4|merge,replace|} # optional",
+			"    apps.open-cluster-management.io/reconcile-rate: ${5|medium,low,high,off|} # optional",
 			"spec:",
-			"  channel: ${4:<channel-name>} # namespace/name",
+			"  channel: ${6:<channel-name>} # namespace/name",
 			"  placement:",
 			"    placementRef:",
 			"      kind: Placement",
-			"      name: ${5:<placement-name>}"
+			"      name: ${7:<placement-name>}"
 		]
 	}
 }
