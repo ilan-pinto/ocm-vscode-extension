@@ -33,6 +33,7 @@
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.clusteradmVersion",
 		"onCommand:ocm-vscode-extension.validateEnvPrereq",
+		"onCommand:ocm-vscode-extension.buildLocalCluster",
 		"onView:ocm.explorer"
 	],
 	"main": "./out/src/extension.js",
@@ -49,8 +50,13 @@
 				"category": "OCM"
 			},
 			{
-				"command": "ocm-vscode-extension..validateEnvPrereq",
+				"command": "ocm-vscode-extension.validateEnvPrereq",
 				"title": "validate local env prerequisites",
+				"category": "OCM"
+			},
+			{
+				"command": "ocm-vscode-extension.buildLocalCluster",
+				"title": "build local kind cluster",
 				"category": "OCM"
 			}
 		],
@@ -88,7 +94,7 @@
 		"viewsWelcome": [
 			{
 				"view" : "forDevelopers", 
-				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.clusteradmVersion)\n [Validate Env Prerequisites](command:ocm-vscode-extension.validateEnvPrereq) \n[Start Local Kind Cluster](command:ocm-vscode-extension.clusteradmVersion)  "
+				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.clusteradmVersion)\n [Validate Env Prerequisites](command:ocm-vscode-extension.validateEnvPrereq) \n  [Start Local Kind Cluster](command:ocm-vscode-extension.buildLocalCluster)"
 			}
 		],  
 		"menus": {
