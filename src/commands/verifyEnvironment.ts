@@ -12,10 +12,9 @@ export function verifyTools() {
 
 // get clusteradm version
 export function getClusteradmVersion(){
-	shell.executeShellCommand('clusteradm version')
-		.then(stdout => {
-			let clusteradmVersion = stdout.split(':')[1].trim();
-            vscode.window.showInformationMessage(`OCM extension, clusteradm version is: ${clusteradmVersion}`);
-		})
-		.catch(stderr => vscode.window.showErrorMessage(`OCM extension, unable to detect clusteradm version: ${stderr}`));
+	shell.executeShellCommand('echo $(clusteradm version) | grep \'client version\' | cut -d \':\' -f 2 | xargs')
+		.then(stdout => vscode.window.showInformationMessage(
+			`OCM extension, clusteradm client version is: ${stdout}`))
+		.catch(stderr => vscode.window.showErrorMessage(
+			`OCM extension, unable to detect clusteradm version: ${stderr}`));
 }
