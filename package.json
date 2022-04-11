@@ -28,12 +28,11 @@
 		"Snippets",
 		"Other"
 	],
-	"icon": "./src/img/icm-icon-black.png",
 	"activationEvents": [
 		"onCommand:ocm-vscode-extension.ocmNewProject",
-		"onCommand:ocm-vscode-extension.clusteradmVersion",
-		"onCommand:ocm-vscode-extension.validateEnvPrereq",
-		"onCommand:ocm-vscode-extension.buildLocalCluster",
+		"onCommand:ocm-vscode-extension.verifyTools",
+		"onCommand:ocm-vscode-extension.getClusteradmVersion",
+		"onCommand:ocm-vscode-extension.buildLocalClusters",
 		"onView:ocm.explorer"
 	],
 	"main": "./out/src/extension.js",
@@ -45,62 +44,60 @@
 				"category": "OCM"
 			},
 			{
-				"command": "ocm-vscode-extension.clusteradmVersion",
-				"title": "check clusteradm version",
+				"command": "ocm-vscode-extension.verifyTools",
+				"title": "Verify required tools existence",
 				"category": "OCM"
 			},
 			{
-				"command": "ocm-vscode-extension.validateEnvPrereq",
-				"title": "validate local env prerequisites",
+				"command": "ocm-vscode-extension.getClusteradmVersion",
+				"title": "Get clusteradm version",
 				"category": "OCM"
 			},
 			{
-				"command": "ocm-vscode-extension.buildLocalCluster",
-				"title": "build local kind cluster",
+				"command": "ocm-vscode-extension.buildLocalClusters",
+				"title": "Build local clusters",
 				"category": "OCM"
 			}
 		],
 		"viewsContainers": {
 			"activitybar": [
-			  {
+				{
 				"id": "ocmView",
 				"title": "OCM",
 				"icon": "src/img/ocm-icon-black.svg"
-			  }
+				}
 			]
-		  },
-		  "views": {
+		},
+		"views": {
 			"ocmView": [
 				{
 					"id": "forDevelopers",
 					"name": "Developers Tools"
-			  },
-			  {
-				"id": "managedClustersExplorer",
-				"name": "Managed Clusters Explorer"
-			  },
-			  {
-				"id": "hubClustersExplorer",
-				"name": "Hub Clusters Explorer"
-			  },
-			  {
-				"id": "deployedApplication",
-				"name": "Deployed Application"
-			  }
-
+				},
+				{
+					"id": "managedClustersExplorer",
+					"name": "Managed Clusters Explorer"
+				},
+				{
+					"id": "hubClustersExplorer",
+					"name": "Hub Clusters Explorer"
+				},
+				{
+					"id": "deployedApplication",
+					"name": "Deployed Application"
+				}
 			]
-			
-		  },
+		},
 		"viewsWelcome": [
 			{
-				"view" : "forDevelopers", 
-				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.clusteradmVersion)\n [Validate Env Prerequisites](command:ocm-vscode-extension.validateEnvPrereq) \n  [Start Local Kind Cluster](command:ocm-vscode-extension.buildLocalCluster)"
+				"view" : "forDevelopers",
+				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.getClusteradmVersion)\n [Verify Tools Existence](command:ocm-vscode-extension.verifyTools) \n  [Start Local Clusters](command:ocm-vscode-extension.buildLocalClusters)"
 			}
-		],  
+		],
 		"menus": {
 			"commandPalette": [
 				{
-					"command": "ocm-vscode-extension.clusteradmVersion",
+					"command": "ocm-vscode-extension.getClusteradmVersion",
 					"when": "view == forDevelopers"
 				}
 			],
@@ -108,8 +105,6 @@
 				{
 					"command": "ocm-vscode-extension.ocmNewProject",
                     "when": "view == ocmView && viewItem == createProject"
-
-
 				}
 			]
 		},

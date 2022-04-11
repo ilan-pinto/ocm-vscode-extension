@@ -1,33 +1,39 @@
 import * as vscode from 'vscode';
 import * as newProject from './commands/newProject';
-import * as build from './commands/buildLocalEnv';
-import * as clusteradm from './utils/clusteradm';
+import * as verifyEnvironment from './commands/verifyEnvironment';
+import * as createEnvironment from './commands/createEnvironment';
 
 const extName = 'ocm-vscode-extension';
+
 // COMMAND NAMES
 const cmdNewProjectName = 'ocmNewProject';
-const cmdClusteradmVerison = 'clusteradmVersion';
-const cmdValidatePrereq = 'validateEnvPrereq';
-const cmdBuildLocalCluster = 'buildLocalCluster';
+const cmdVerifyTools = 'verifyTools';
+const cmdGetClusteradmVersion = 'getClusteradmVersion';
+const cmdBuildLocalClusters = 'buildLocalClusters';
 
 // DISPOSABLES
 const cmdNewProjectDisposable = vscode.commands.registerCommand(
 	`${extName}.${cmdNewProjectName}`, () => newProject.create()
 );
-const cmdClusteradmVerisonDisposable = vscode.commands.registerCommand(
-	`${extName}.${cmdClusteradmVerison}`, () => clusteradm.checkClusteradmVersion()
+
+const cmdVerifyToolsDisposable = vscode.commands.registerCommand(
+	`${extName}.${cmdVerifyTools}`, () => verifyEnvironment.verifyTools()
 );
-const cmdValidatePrereqDisposable = vscode.commands.registerCommand(
-	`${extName}.${cmdValidatePrereq}`, () => build.validatePrereq()
+
+const cmdClusteradmVersionDisposable = vscode.commands.registerCommand(
+	`${extName}.${cmdGetClusteradmVersion}`, () => verifyEnvironment.getClusteradmVersion()
 );
 
 const cmdBuildLocalClusterDisposable = vscode.commands.registerCommand(
-	`${extName}.${cmdBuildLocalCluster}`, () => build.buildLocalCluster()
+	`${extName}.${cmdBuildLocalClusters}`, () => createEnvironment.buildLocalClusters()
 );
-
 
 // EXPORTS
 export function activate(context: vscode.ExtensionContext) {
-	 // command: ocm-vscode-extension.ocmNewProject
-	context.subscriptions.push(cmdNewProjectDisposable, cmdClusteradmVerisonDisposable, cmdValidatePrereqDisposable, cmdBuildLocalClusterDisposable);
+	context.subscriptions.push(
+		cmdNewProjectDisposable, // command: ocm-vscode-extension.ocmNewProject
+		cmdVerifyToolsDisposable, // command: ocm-vscode-extension.verifyTools
+		cmdClusteradmVersionDisposable, // command: ocm-vscode-extension.getClusteradmVersion
+		cmdBuildLocalClusterDisposable // command: ocm-vscode-extension.buildLocalClusters
+	);
 }
