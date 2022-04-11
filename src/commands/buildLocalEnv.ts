@@ -8,7 +8,7 @@ import { rejects } from 'node:assert';
 //validate local env prerequisites
 export function validatePrereq(): Promise<void>[] {
 
-    const mandatoryCommands = ['kubectl1', 'clusteradm','kind' ];
+    const mandatoryCommands = ['kubectl', 'clusteradm','kind' ];
     const optionalCommands = ['oc'];
 
 	var cmdExecutionPromises: Promise<void>[] = [];
