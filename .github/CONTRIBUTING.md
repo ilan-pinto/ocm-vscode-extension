@@ -29,6 +29,7 @@ All you need is [VSCode][2] and [NodeJS][0].
 
 - `npm install` will install all the required modules for the project.
 - `npm run lint` will lint all _typescript_ sources.
+- `npm run tests` will run the unit tests.
 - `npm run build` will lint and compile the project.
 - `npm run clean:build` will remove any pre-compiled sources before building.
 - `npm run integration-tests` will run the integration tests.

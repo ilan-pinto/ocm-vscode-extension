@@ -17,9 +17,9 @@ export function executeShellCommand(command: string): Promise<string> {
 export  function checkToolExists(tool: string): Promise<void> {
 	return new Promise((resolve, reject) => {
 		let execution = shell.exec(`command -v ${tool}`);
-		if (execution.code !== 0) {
-			reject();
+		if (execution.code === 0) {
+			resolve();
 		}
-		resolve();
+		reject();
 	});
 }

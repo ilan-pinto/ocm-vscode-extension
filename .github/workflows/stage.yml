@@ -35,6 +35,9 @@ jobs:
       - name: Install project modules
         run: npm i
 
+      - name: Run unit tests
+        run: npm test
+
       - name: Create VSIX package
         run: |
           npm run vsce:package -- --target ${{ matrix.target }}

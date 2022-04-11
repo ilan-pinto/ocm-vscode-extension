@@ -62,9 +62,9 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-				"id": "ocmView",
-				"title": "OCM",
-				"icon": "src/img/ocm-icon-black.svg"
+					"id": "ocmView",
+					"title": "OCM",
+					"icon": "src/img/ocm-icon-black.svg"
 				}
 			]
 		},
@@ -90,7 +90,7 @@
 		},
 		"viewsWelcome": [
 			{
-				"view" : "forDevelopers",
+				"view": "forDevelopers",
 				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.getClusteradmVersion)\n [Verify Tools Existence](command:ocm-vscode-extension.verifyTools) \n  [Start Local Clusters](command:ocm-vscode-extension.buildLocalClusters)"
 			}
 		],
@@ -104,7 +104,7 @@
 			"view/item/context": [
 				{
 					"command": "ocm-vscode-extension.ocmNewProject",
-                    "when": "view == ocmView && viewItem == createProject"
+					"when": "view == ocmView && viewItem == createProject"
 				}
 			]
 		},
@@ -143,17 +143,20 @@
 		"vscode:prepublish": "npm run clean:build",
 		"compile": "tsc -p ./",
 		"watch": "tsc -w -p ./",
-		"lint": "eslint src integration-tests --ext ts",
+		"lint": "eslint src integration-tests tests --ext ts",
 		"clean": "rm -rf out",
 		"clean-ext": "rm -rf .vscode-test",
 		"clean-test-ws": "find ./test-workspace/ -mindepth 1  ! -name '.gitkeep' -delete",
-		"clean:all":"npm run clean && npm run clean-ext && npm run clean-test-ws",
+		"clean:all": "npm run clean && npm run clean-ext && npm run clean-test-ws",
 		"preintegration-tests": "npm run compile",
 		"integration-tests": "node ./out/integration-tests/runSuite.js",
 		"prebuild": "npm run lint",
 		"build": "npm run compile",
 		"clean:build": "npm run clean && npm run build",
-		"vsce:package": "vsce package"
+		"vsce:package": "vsce package",
+		"pretest": "npm run compile",
+		"test": "mocha --check-leaks --fail-zero --color --parallel --ui tdd ./out/tests/",
+		"tests": "npm test"
 	},
 	"dependencies": {
 		"@types/shelljs": "^0.8.11",
@@ -162,6 +165,7 @@
 	},
 	"devDependencies": {
 		"@types/chai": "^4.3.0",
+		"@types/chai-as-promised": "^7.1.5",
 		"@types/fs-extra": "^9.0.13",
 		"@types/glob": "^7.2.0",
 		"@types/js-yaml": "^4.0.5",
@@ -173,6 +177,7 @@
 		"@typescript-eslint/parser": "^5.17.0",
 		"@vscode/test-electron": "^2.1.3",
 		"chai": "^4.3.6",
+		"chai-as-promised": "^7.1.1",
 		"eslint": "^8.12.0",
 		"glob": "^7.2.0",
 		"js-yaml": "^4.1.0",
