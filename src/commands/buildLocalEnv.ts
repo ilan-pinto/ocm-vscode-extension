@@ -24,9 +24,11 @@ export function validatePrereq(): Promise<void>[] {
 
 export async function buildLocalCluster() { 
     
-    await Promise.all(validatePrereq()).then( () => {        
+    await Promise.all(validatePrereq())
+    .then( () => {        
         vscode.window.showInformationMessage('building cluster ');
-    }).catch(() => {
+    })
+    .catch(() => {
         vscode.window.showErrorMessage('ocm extension did not all of the required commands');                                   
     } );
         
