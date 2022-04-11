@@ -1,6 +1,6 @@
 import * as shell from './shell';
 
-interface RequiredTool {
+export interface RequiredTool {
 	name: string,
 	installUrl: string
 }
