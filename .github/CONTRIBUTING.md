@@ -1,6 +1,6 @@
 # Contributing to oc-vscode-extension
 
-All contributions are welcomed, thank you!
+All contributions are welcome, thank you!
 
 ## Useful Links
 
@@ -20,17 +20,19 @@ All you need is [VSCode][2] and [NodeJS][0].
 ### Project Layout
 
 - [src][10] contains the source code for the extension.
-- [integration-tests][11] contains the sources for integration testing.
-- [snippets][12] contains the snippets offered by the extension.
-- [templates][13] contains template files for orchestrating new projects.
-- [test-workspace][14] used for integration testing, git is keeping it and ignoring its content.
+- [tests][11] contains the sources for the unit tests.
+- [integration-tests][12] contains the sources for integration tests.
+- [snippets][13] contains the snippets offered by the extension.
+- [templates][14] contains template files for orchestrating new projects.
+- [images][15] contains various images used throughout the project.
+- [test-workspace][16] used for integration testing, git is keeping it and ignoring its content.
 
 ### NPM Scripts
 
 - `npm install` will install all the required modules for the project.
 - `npm run lint` will lint all _typescript_ sources.
 - `npm run tests` will run the unit tests.
-- `npm run build` will lint and compile the project.
+- `npm run build` will lint, test, and compile the project.
 - `npm run clean:build` will remove any pre-compiled sources before building.
 - `npm run integration-tests` will run the integration tests.
 - `npm run clean` will remove the compiled sources
@@ -51,7 +53,9 @@ All you need is [VSCode][2] and [NodeJS][0].
 [3]: https://github.com/ilan-pinto/ocm-vscode-extension/releases/tag/early-access
 <!-- CODE LINKS -->
 [10]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/src
-[11]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/integration-tests
-[12]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/snippets
-[13]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/templates
-[14]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/test-workspace
+[11]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/tests
+[12]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/integration-tests
+[13]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/snippets
+[14]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/templates
+[15]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/images
+[16]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/test-workspace

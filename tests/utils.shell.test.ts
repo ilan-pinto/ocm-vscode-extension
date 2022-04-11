@@ -9,23 +9,23 @@ chaiUse(chaiAsPromised);
 
 suite('Test cases for the shell utility functions', () => {
 
-	suite('Test cases for the checkToolExists utility function', () => {
+	suite('Testing checkToolExists', () => {
 		beforeEach(() => sinon.restore());
 
-		test('When checking if an existing tool exists, the promise should be fulfilled', async () => {
+		test('When checking with an existing tool, the promise should be fulfilled', async () => {
 			// @ts-ignore
 			sinon.stub(shell, 'exec').withArgs('command -v existing-tool').returns({code: 0});
 			return expect(checkToolExists('existing-tool')).to.eventually.be.fulfilled;
 		});
 
-		test('When checking if a non-existing tool exists, the promise should be rejected', async () => {
+		test('When checking with a non-existing tool, the promise should be rejected', async () => {
 			// @ts-ignore
 			sinon.stub(shell, 'exec').withArgs('command -v non-existing-tool').returns({code: 999});
 			return expect(checkToolExists('non-existing-tool')).to.eventually.be.rejected;
 		});
 	});
 
-	suite('Test cases for the executeShellCommand utility function', () => {
+	suite('Testing executeShellCommand', () => {
 		beforeEach(() => sinon.restore());
 
 		test('When executing a successful command, the promise should be fulfilled with the stdout', async () => {
@@ -36,7 +36,7 @@ suite('Test cases for the shell utility functions', () => {
 			return expect(executeShellCommand(dummyCommand)).to.eventually.be.fulfilled.and.equal(dummyExecution.stdout);
 		});
 
-		test('When executing a failed command, the promise should be fulfilled with the stderr', async () => {
+		test('When executing a failed command, the promise should be rejected with the stderr', async () => {
 			let dummyCommand = 'dummy-failed-command';
 			let dummyExecution = {code: 999, stderr: 'oh my god they killed kenny'}; // note stderr and not stdout
 			// @ts-ignore

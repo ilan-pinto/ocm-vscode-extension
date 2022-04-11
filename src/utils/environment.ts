@@ -24,17 +24,17 @@ export const requiredTools: RequiredTool[] = [
 	}
 ];
 
-
 // verify the the existence of the required tools in the environment's shell
 export async function verifyTools(
 	success: LoggerCallback, failure: LoggerCallback, ...tools: RequiredTool[]): Promise<void> {
 
-	return Promise.all(tools.map(tool => {
-		shell.checkToolExists(tool.name)
-			.catch(() => success(`OCM extension, ${tool.name} is missing, please install it: ${tool.installUrl}`)
-			);
-		})
-	)
-	.then(() => success('OCM extension, all tools are accessible, we\'re good to go'))
-	.catch(() => failure('OCM extension, we\'re missing some tools'));
+	let executionPromises: Promise<void>[] = tools.map(tool => {
+		let newPromise = shell.checkToolExists(tool.name);
+		newPromise.catch(() => failure(`OCM extension, ${tool.name} is missing, please install it: ${tool.installUrl}`));
+		return newPromise;
+	});
+
+	return Promise.all(executionPromises)
+		.then(() => success('OCM extension, all tools are accessible, we\'re good to go'))
+		.catch(() => failure('OCM extension, we\'re missing some tools'));
 }
