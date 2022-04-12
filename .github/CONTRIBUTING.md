@@ -32,8 +32,8 @@ All you need is [VSCode][2] and [NodeJS][0].
 - `npm install` will install all the required modules for the project.
 - `npm run lint` will lint all _typescript_ sources.
 - `npm run tests` will run the unit tests.
-- `npm run tests:cov` will run the unit tests verifying and summarizing the code coverage.
-- `npm run tests:cov-rep` will run the unit tests verifying the coverage.
+- `npm run tests:cov` will run the unit tests and verify and summarize the code coverage.
+- `npm run tests:cov-rep` will run the unit tests and verify the coverage creating an HTML coverage report.
 - `npm run build` will lint, compile, test, and verify the code coverage for the project.
 - `npm run clean:build` will remove any pre-compiled sources before building.
 - `npm run integration-tests` will run the integration tests.
@@ -42,6 +42,27 @@ All you need is [VSCode][2] and [NodeJS][0].
 - `npm run clean-test-ws` will clean all content from the testing folder (test-workspace) excluding _.gitkeep_.
 - `npm run clean:all` will execute the above three clean scripts.
 - `npm run vsce:package` will build the VSIX package.
+
+### Coding Guidelines
+
+For maintainability, readability, and testing purposes, as well as for the overall robustness of this project,
+we separate the various _vscode_ integrations from their underlying implementations.</br>
+
+For example, at the time of writing this, _vscode_ integrations reside in the [commands package][17] and the
+underlying implementations reside in the [utils package][18].</br>
+Take the layout of the package with a pinch of salt, but also take the following couple of rules of thumb under
+consideration while contributing code:
+
+- The _vscode_ integration part should be as small as possible, and functions should be perceived as wrappers for
+  the underlying implementations.
+- The underlying implementations should be completely decoupled from _vscode_'s API.
+
+In regards to testing,</br>
+_vscode_'s integration should be tested within the context of [integration tests][12],</br>
+the underlying implementations can, and probably should be tested within the context of [unit tests][11].
+
+As for commits and pull requests, we prefer [conventional commit messages][4], but we do not enforce it yet.
+Please be as informative as possible when opening pull requests.
 
 ### Launch Configurations
 
@@ -53,6 +74,7 @@ All you need is [VSCode][2] and [NodeJS][0].
 [1]: https://code.visualstudio.com/api
 [2]: https://code.visualstudio.com/
 [3]: https://github.com/ilan-pinto/ocm-vscode-extension/releases/tag/early-access
+[4]: https://www.conventionalcommits.org/
 <!-- CODE LINKS -->
 [10]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/src
 [11]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/tests
@@ -61,3 +83,5 @@ All you need is [VSCode][2] and [NodeJS][0].
 [14]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/templates
 [15]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/images
 [16]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/test-workspace
+[17]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/src/commands
+[18]: https://github.com/ilan-pinto/ocm-vscode-extension/tree/main/src/utils
