@@ -18,6 +18,7 @@ suite('Test cases for the environment utility functions', () => {
 	});
 
 	suite('Testing verifyTools', () => {
+		// dummy tools used for testing purposes
 		const dummyTool1: RequiredTool = {
 			'name': 'find-wally',
 			'installUrl': 'https://you.can/find/install/instructions/#here'
@@ -29,9 +30,9 @@ suite('Test cases for the environment utility functions', () => {
 		};
 
 		test('When verifying with one existing tool, the successful logger should be called', async () => {
-			// stub the checkToolExists shell utility to resolve, indicating the for tool was found
+			// given the shell utility will resolve the request, indicating the tool was found
 			sinon.stub(shellUtils, 'checkToolExists').withArgs(dummyTool1.name).resolves();
-
+			// then expect the promise to be resolved, the and the message consumers to be called accordingly
 			return expect(verifyTools(successfulLoggerSpy, failedLoggerSpy, dummyTool1))
 				.to.eventually.be.fulfilled
 				.then(() => {
@@ -42,9 +43,9 @@ suite('Test cases for the environment utility functions', () => {
 		});
 
 		test('When verifying with one non-existing tool, the failure logger should be called', async () => {
-			// stub the checkToolExists shell utility to reject, indicating the for tool was not found
+			// given the shell utility will reject the request, indicating the for tool was NOT found
 			sinon.stub(shellUtils, 'checkToolExists').withArgs(dummyTool2.name).rejects();
-
+			// then expect the promise to be rejected, the and the message consumers to be called accordingly
 			return expect(verifyTools(successfulLoggerSpy, failedLoggerSpy, dummyTool2))
 				.to.eventually.be.rejected
 				.then(() => {
@@ -56,12 +57,11 @@ suite('Test cases for the environment utility functions', () => {
 		});
 
 		test('When verifying with two existing tools, the successful logger should be called', async () => {
+			// given the shell utility will resolve for both requests, indicating the both tools were found
 			let checkToolExistsStub = sinon.stub(shellUtils, 'checkToolExists');
-			// stub the checkToolExists shell utility to resolve for dummyTool1, indicating the for tool was found
 			checkToolExistsStub.withArgs(dummyTool1.name).resolves();
-			// stub the checkToolExists shell utility to resolve for dummyTool2, indicating the for tool was found
 			checkToolExistsStub.withArgs(dummyTool2.name).resolves();
-
+			// then expect the promise to be resolved, the and the message consumers to be called accordingly
 			return expect(verifyTools(successfulLoggerSpy, failedLoggerSpy, dummyTool1))
 				.to.eventually.be.fulfilled
 				.then(() => {
@@ -72,12 +72,11 @@ suite('Test cases for the environment utility functions', () => {
 		});
 
 		test('When verifying with two tools, but only one exists, the failure logger should be called', async () => {
+			// given the shell utility will reject one request and resolve the other, indicating only one tool was found
 			let checkToolExistsStub = sinon.stub(shellUtils, 'checkToolExists');
-			// stub the checkToolExists shell utility to reject for dummyTool1, indicating the for tool was not found
 			checkToolExistsStub.withArgs(dummyTool1.name).rejects();
-			// stub the checkToolExists shell utility to resolve for dummyTool2, indicating the for tool was found
 			checkToolExistsStub.withArgs(dummyTool2.name).resolves();
-
+			// then expect the promise to be rejected, the and the message consumers to be called accordingly
 			return expect(verifyTools(successfulLoggerSpy, failedLoggerSpy, ...[dummyTool1, dummyTool2]))
 				.to.eventually.be.rejected
 				.then(() => {
@@ -90,12 +89,16 @@ suite('Test cases for the environment utility functions', () => {
 	});
 
 	suite('Testing parseClusteradmVersion', () => {
+		// dummy "clusteradm version" output
 		const outputConnectedServer = `client version	:v0.2.0
 		server version	:v1.2.3`;
 
 		test('When clusteradm is installed and connected to a server, both client and server versions should be displayed', async () => {
+			// given the clusteradm tool exists
 			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').resolves();
+			// given the version command will resolved to a correct output
 			sinon.stub(shellUtils, 'executeShellCommand').withArgs('clusteradm version').resolves(outputConnectedServer);
+			// then expect the promise to be resolved, the and the message consumers to be called accordingly
 			return expect(parseClusteradmVersion(successfulLoggerSpy, failedLoggerSpy))
 				.to.eventually.be.fulfilled
 				.then(() => {
@@ -111,9 +114,12 @@ suite('Test cases for the environment utility functions', () => {
 		});
 
 		test('When failed to get clusteradm version, the reject error should be displayed', async () => {
+			// given the clusteradm tool exists
 			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').resolves();
+			// given the version command will rejected with a custom error
 			let rejectMessage = 'You are not elias\'s younger brother';
 			sinon.stub(shellUtils, 'executeShellCommand').withArgs('clusteradm version').rejects(rejectMessage);
+			// then expect the promise to be rejected, the and the message consumers to be called accordingly
 			return expect(parseClusteradmVersion(successfulLoggerSpy, failedLoggerSpy))
 				.to.eventually.be.rejected
 				.then(() => {
@@ -125,7 +131,9 @@ suite('Test cases for the environment utility functions', () => {
 		});
 
 		test('When clusteradm is not installed, an error should be displayed', async () => {
+			// given the clusteradm tool does NOT exists
 			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').rejects();
+			// then expect the promise to be rejected, the and the message consumers to be called accordingly
 			return expect(parseClusteradmVersion(successfulLoggerSpy, failedLoggerSpy))
 				.to.eventually.be.rejected
 				.then(() => {
