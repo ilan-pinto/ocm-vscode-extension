@@ -1,13 +1,29 @@
 import * as shell from './shell';
 
+
+export const hub = "hub";
+export const cluster1 = "cluster1"; 
+export const cluster2 = "cluster2"; 
+
+export const hubContext = `kind-${hub}`;
+export const cluster1Context = `kind-${cluster1}`;
+export const cluster2Context = `kind-${cluster2}`;
+
+
+
+
 export interface RequiredTool {
 	name: string,
 	installUrl: string
 }
 
+
+
 interface LoggerCallback {
 	(msg: string): void
 }
+
+
 
 export const requiredTools: RequiredTool[] = [
 	{

@@ -23,3 +23,10 @@ export  function checkToolExists(tool: string): Promise<void> {
 		reject();
 	});
 }
+
+// starts a local OCM kind env and return a promise
+export  function buildLocalEnv() {
+
+	shell.exec()
+
+}
