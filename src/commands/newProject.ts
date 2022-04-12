@@ -43,7 +43,7 @@ export async function create() {
 	// verify project folder doesn't exists
 	if (await fse.pathExists(projectFolder)) {
 		console.error(`project folder ${projectName} exists, please use another.`);
-		vscode.window.showInformationMessage(`project folder ${projectName} exists, please use another`);
+		vscode.window.showErrorMessage(`project folder ${projectName} exists, please use another`);
 		return;
 	}
 	// create project folder

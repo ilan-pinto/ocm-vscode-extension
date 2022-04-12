@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as fse from 'fs-extra';
 import * as yaml from 'js-yaml';
-import { afterEach, beforeEach } from 'mocha';
+import { beforeEach } from 'mocha';
 import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
@@ -15,7 +15,6 @@ interface ExpectedTemplate {
 suite('New-project command Suite', () => {
 	var infoBoxSpy: sinon.SinonSpy;
 	var quickPickStub: sinon.SinonStub;
-	var inputBoxStub: sinon.SinonStub;
 
 	// expected template files
 	const expectedTemplateFiles = [
@@ -45,16 +44,12 @@ suite('New-project command Suite', () => {
 	];
 
 	beforeEach(() => {
+		 // unwrap previously wrapped sinon objects
+		sinon.restore();
 		// wrap a spy around the information box
 		infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage');
 		// stub the show quick pick
 		quickPickStub = sinon.stub(vscode.window, 'showQuickPick');
-	});
-
-	afterEach(() => {
-		infoBoxSpy.restore(); // unwrap the information box spy
-		quickPickStub.restore(); // unwrap the quick pick stub
-		inputBoxStub.restore(); // unwrap the input box stub
 	});
 
 	expectedTemplates.forEach(sut => {
@@ -67,7 +62,7 @@ suite('New-project command Suite', () => {
 			// given the user will select the sut type in the pick box
 			quickPickStub.resolves(sut.channelType);
 			// given the user will input the project name
-			inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
+			sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 			// when invoking the command
 			await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 			// then a folder with the project name should be created
@@ -94,7 +89,7 @@ suite('New-project command Suite', () => {
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
 		// given the user will not input a project name (type enter)
-		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves('');
+		sinon.stub(vscode.window, 'showInputBox').resolves('');
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then a folder with the project name should be created
@@ -112,13 +107,15 @@ suite('New-project command Suite', () => {
 	});
 
 	test('Fail creating a new project when the folder already exists', async () => {
+		// wrap a spy over vscode's error message box
+		let errorBoxSpy = sinon.spy(vscode.window, 'showErrorMessage');
 		// given the following project name and path
 		let projectNameInput = 'existing-folder-name';
 		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
 		// given the folder already exists (with no files in it)
 		await fse.emptyDir(projectFolder);
 		// given the user will input the project name as the existing folder
-		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
+		sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then the folder should still exist
@@ -128,8 +125,8 @@ suite('New-project command Suite', () => {
 		let createdFiles: string[] = await fse.readdir(projectFolder);
 		expect(createdFiles).to.be.empty;
 		// then a proper info message should be displayed to the user
-		let infoBoxCall: sinon.SinonSpyCall = infoBoxSpy.getCalls()[0]; // get the first call to the spy
-		expect(infoBoxCall.firstArg).to.equal(`project folder ${projectNameInput} exists, please use another`);
+		let errorBoxCall: sinon.SinonSpyCall = errorBoxSpy.getCalls()[0]; // get the first call to the spy
+		expect(errorBoxCall.firstArg).to.equal(`project folder ${projectNameInput} exists, please use another`);
 	});
 
 	test('Fail creating a new project when not in a workspace', async () => {
@@ -139,7 +136,7 @@ suite('New-project command Suite', () => {
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
 		// given the user will input the project name as the existing folder
-		inputBoxStub = sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
+		sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 		// given the workspace api will return undefined workspaceFolders
 		let workspaceFolderStub = sinon.stub(vscode.workspace, 'workspaceFolders').value(undefined);
 		// when invoking the command
