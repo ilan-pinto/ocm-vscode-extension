@@ -40,7 +40,7 @@
 		"commands": [
 			{
 				"command": "ocm-vscode-extension.ocmNewProject",
-				"title": "create an OCM application-manager project",
+				"title": "Create an application-manager project",
 				"category": "OCM"
 			},
 			{
@@ -95,12 +95,6 @@
 			}
 		],
 		"menus": {
-			"commandPalette": [
-				{
-					"command": "ocm-vscode-extension.getClusteradmVersion",
-					"when": "view == forDevelopers"
-				}
-			],
 			"view/item/context": [
 				{
 					"command": "ocm-vscode-extension.ocmNewProject",
