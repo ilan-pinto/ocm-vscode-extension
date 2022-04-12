@@ -13,7 +13,6 @@ interface ExpectedTemplate {
 
 // Test cases for the the ocm-vscode-extension.ocmNewProject command
 suite('New-project command Suite', () => {
-	var infoBoxSpy: sinon.SinonSpy;
 	var quickPickStub: sinon.SinonStub;
 
 	// expected template files
@@ -46,14 +45,14 @@ suite('New-project command Suite', () => {
 	beforeEach(() => {
 		 // unwrap previously wrapped sinon objects
 		sinon.restore();
-		// wrap a spy around the information box
-		infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage');
 		// stub the show quick pick
 		quickPickStub = sinon.stub(vscode.window, 'showQuickPick');
 	});
 
 	expectedTemplates.forEach(sut => {
 		test(`Successfully create a project with a custom name for type ${sut.channelType}`, async () => {
+			// wrap a spy around the information box
+			let infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage');
 			// given the following project name and path
 			let projectNameInput = `dummy-project-name-${sut.channelType}`;
 			let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
@@ -73,7 +72,7 @@ suite('New-project command Suite', () => {
 			expect(createdFiles).to.have.members(expectedTemplateFiles);
 			// then a proper info message should be displayed to the user
 			let infoBoxCall: sinon.SinonSpyCall = infoBoxSpy.getCalls()[0]; // get the first call to the spy
-			expect(infoBoxCall.firstArg).to.equal(`OCM project ${projectNameInput} created`);
+			expect(infoBoxCall.firstArg).to.equal(`OCM extension, project ${projectNameInput} created`);
 			// then the channel resource type is the expected type
 			let channelResource: any = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
 			expect(channelResource['spec']['type']).to.equal(sut.channelType);
@@ -84,6 +83,8 @@ suite('New-project command Suite', () => {
 	});
 
 	test('Successfully create a project with the default name and type', async () => {
+		// wrap a spy around the information box
+		let infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage');
 		// given the default path
 		let projectFolder: string = path.resolve(__dirname, '../../../test-workspace/ocm-application');
 		// given the path doesn't already exists
@@ -100,7 +101,7 @@ suite('New-project command Suite', () => {
 		expect(createdFiles).to.have.members(expectedTemplateFiles);
 		// then a proper info message should be displayed to the user
 		let infoBoxCall: sinon.SinonSpyCall = infoBoxSpy.getCalls()[0]; // get the first call to the spy
-		expect(infoBoxCall.firstArg).to.equal('OCM project ocm-application created');
+		expect(infoBoxCall.firstArg).to.equal('OCM extension, project ocm-application created');
 		// then the channel resource type is the the default Git type
 		let channelResource: any = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
 		expect(channelResource['spec']['type']).to.equal('Git');
@@ -126,10 +127,12 @@ suite('New-project command Suite', () => {
 		expect(createdFiles).to.be.empty;
 		// then a proper info message should be displayed to the user
 		let errorBoxCall: sinon.SinonSpyCall = errorBoxSpy.getCalls()[0]; // get the first call to the spy
-		expect(errorBoxCall.firstArg).to.equal(`project folder ${projectNameInput} exists, please use another`);
+		expect(errorBoxCall.firstArg).to.equal(`OCM extension, project folder ${projectNameInput} exists, please use another`);
 	});
 
 	test('Fail creating a new project when not in a workspace', async () => {
+		// wrap a spy over vscode's warning message box
+		let warningBoxSpy = sinon.spy(vscode.window, 'showWarningMessage');
 		// given the following project name and path
 		let projectNameInput = 'non-existing-folder-name';
 		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
@@ -138,17 +141,15 @@ suite('New-project command Suite', () => {
 		// given the user will input the project name as the existing folder
 		sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 		// given the workspace api will return undefined workspaceFolders
-		let workspaceFolderStub = sinon.stub(vscode.workspace, 'workspaceFolders').value(undefined);
+		sinon.stub(vscode.workspace, 'workspaceFolders').value(undefined);
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		// then the folder should not be created
 		let pathCreated: boolean = await fse.pathExists(projectFolder);
 		expect(pathCreated).to.be.false;
 		// then a proper info message should be displayed to the user
-		let infoBoxCall: sinon.SinonSpyCall = infoBoxSpy.getCalls()[0]; // get the first call to the spy
-		expect(infoBoxCall.firstArg).to.equal('no workspace folder, please open a project or create a workspace');
-		// unwrap the workspace folders stub
-		workspaceFolderStub.restore();
+		let warningBoxCall: sinon.SinonSpyCall = warningBoxSpy.getCalls()[0]; // get the first call to the spy
+		expect(warningBoxCall.firstArg).to.equal('OCM extension, no workspace folder, please open a project or create a workspace');
 	});
 
 	/* ############################# ##
