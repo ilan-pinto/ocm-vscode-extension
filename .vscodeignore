@@ -1,7 +1,9 @@
 .git/**
 .github/**
+.nyc_output/**
 .vscode/**
 .vscode-test/**
+coverage/**
 images/**
 integration-tests/**
 out/integration-tests/**

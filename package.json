@@ -144,12 +144,16 @@
 		"clean:all": "npm run clean && npm run clean-ext && npm run clean-test-ws",
 		"preintegration-tests": "npm run compile",
 		"integration-tests": "node ./out/integration-tests/runSuite.js",
-		"build": "npm run lint && npm run tests",
+		"build": "npm run lint && npm run tests:cov",
 		"clean:build": "npm run clean && npm run build",
 		"vsce:package": "vsce package",
 		"pretest": "npm run compile",
 		"test": "mocha --check-leaks --fail-zero --color --parallel --ui tdd ./out/tests/",
-		"tests": "npm test"
+		"tests": "npm test",
+		"test:cov": "nyc --compact false --check-coverage --clean --reporter=text npm test",
+		"tests:cov": "npm run test:cov",
+		"test:cov-rep": "rm -rf coverage/* && nyc --compact false --check-coverage --clean --reporter=html npm test",
+		"tests:cov-rep": "npm run test:cov-rep"
 	},
 	"dependencies": {
 		"@types/shelljs": "^0.8.11",
@@ -175,6 +179,7 @@
 		"glob": "^7.2.0",
 		"js-yaml": "^4.1.0",
 		"mocha": "^9.2.2",
+		"nyc": "^15.1.0",
 		"sinon": "^13.0.1",
 		"typescript": "^4.6.3",
 		"vsce": "^2.7.0"
