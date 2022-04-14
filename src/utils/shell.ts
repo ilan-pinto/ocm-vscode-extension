@@ -40,17 +40,16 @@ export async function buildLocalEnv() {
 	
 	console.log('init Join cluster1 to hub');
 	shell.exec(`kubectl config use ${env.cluster1Context}`);
-	const fullJoinCmd = shell.echo( joinCmd ).sed('<cluster_name>', env.cluster1).sed('\n','');
+	const fullJoinCmd = shell.echo( joinCmd ).sed('<cluster_name>', env.cluster1).sed('\n',' ');
 
 	shell.exec(fullJoinCmd + ` --force-internal-endpoint-lookup --wait`);
-;
 
 
 	console.log('init Join cluster2 to hub');
 	shell.exec(`kubectl config use ${env.cluster2Context}`);
-	const fullJoinCmd2 = shell.echo( joinCmd ).sed('<cluster_name>', env.cluster2).sed('\n',''); 
+	const fullJoinCmd2 = shell.echo( joinCmd ).sed('<cluster_name>', env.cluster2).sed('\n',' '); 
 
-	shell.exec(fullJoinCmd2+ ` --force-internal-endpoint-lookup --wait`);
+	shell.exec(fullJoinCmd2 + ` --force-internal-endpoint-lookup --wait`);
 
 	await setTimeout(() =>{
 		console.log('Accept join of cluster1 and cluster2');

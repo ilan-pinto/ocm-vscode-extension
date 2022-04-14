@@ -2,9 +2,14 @@ import * as environment from '../utils/environment';
 import * as vscode from 'vscode';
 import * as shell from '../utils/shell';
 
-export function buildLocalClusters() {
-	environment.verifyTools(...environment.requiredTools)
-		.then(() => {
+export async function buildLocalClusters() {
+  await	environment.verifyTools(
+		vscode.window.showInformationMessage,
+		vscode.window.showErrorMessage,
+		...environment.requiredTools)
+	.then(
+		  () => {
+			// TODO: build local clusters here
 			vscode.window.showInformationMessage('Building local env');
 			shell.buildLocalEnv();
 		})
