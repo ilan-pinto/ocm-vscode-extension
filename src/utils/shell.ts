@@ -1,4 +1,5 @@
 import * as shell from 'shelljs' ;
+import * as env from './environment';
 
 shell.config.execPath = String(shell.which('node'));
 
@@ -25,8 +26,36 @@ export  function checkToolExists(tool: string): Promise<void> {
 }
 
 // starts a local OCM kind env and return a promise
-export  function buildLocalEnv() {
+export async function buildLocalEnv() {
 
-	shell.exec()
+	// TODO - check docker/podman engine is active
+
+	console.log('creating clusters');
+	shell.exec('kind create cluster --name ' + env.hub); 
+	shell.exec('kind create cluster --name ' + env.cluster1); 
+	shell.exec('kind create cluster --name ' + env.cluster2);
+
+	console.log('init hub');
+	const joinCmd = shell.exec(`kubectl config use ${env.hubContext} && clusteradm init --use-bootstrap-token`).grep('clusteradm'); 
+	
+	console.log('init Join cluster1 to hub');
+	shell.exec(`kubectl config use ${env.cluster1Context}`);
+	const fullJoinCmd = shell.echo( joinCmd ).sed('<cluster_name>', env.cluster1).sed('\n','');
+
+	shell.exec(fullJoinCmd + ` --force-internal-endpoint-lookup --wait`);
+;
+
+
+	console.log('init Join cluster2 to hub');
+	shell.exec(`kubectl config use ${env.cluster2Context}`);
+	const fullJoinCmd2 = shell.echo( joinCmd ).sed('<cluster_name>', env.cluster2).sed('\n',''); 
+
+	shell.exec(fullJoinCmd2+ ` --force-internal-endpoint-lookup --wait`);
+
+	await setTimeout(() =>{
+		console.log('Accept join of cluster1 and cluster2');
+		shell.echo(`clusteradm accept --clusters ${env.cluster1},${env.cluster2} --wait`);
+	}, 1000 );
+
 
 }
