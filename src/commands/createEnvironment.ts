@@ -4,8 +4,6 @@ import * as shell from '../utils/shell';
 
 export async function buildLocalClusters() {
   await	environment.verifyTools(
-		vscode.window.showInformationMessage,
-		vscode.window.showErrorMessage,
 		...environment.requiredTools)
 	.then(
 		  () => {
