@@ -30,9 +30,9 @@ export const requiredTools: RequiredTool[] = [
 
 // verify the the existence of the required tools in the environment's shell
 export async function verifyTools(...tools: RequiredTool[]): Promise<string> {
-	let executionPromises: Promise<void|string>[] = tools.map(
+	let executionPromises: Promise<void | string>[] = tools.map(
 		tool => shell.checkToolExists(tool.name).catch(
-			() => Promise.reject(`OCM extension, ${tool.name} is missing, please install it: ${tool.installUrl}`)
+			() => Promise.reject(`OCM extension, ${tool.name} is missing, please install it`)
 		)
 	);
 	return Promise.all(executionPromises)
@@ -41,7 +41,7 @@ export async function verifyTools(...tools: RequiredTool[]): Promise<string> {
 
 // parse the locally installed clusteradm client and server version
 // will be resolved with a string[] or rejected with a string
-export async function parseClusteradmVersion(): Promise<string[]|string> {
+export async function parseClusteradmVersion(): Promise<string[] | string> {
 	return new Promise((resolve, reject) => {
 		// verify clusteradm exists
 		shell.checkToolExists('clusteradm')
