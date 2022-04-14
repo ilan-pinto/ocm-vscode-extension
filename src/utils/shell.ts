@@ -25,6 +25,10 @@ export  function checkToolExists(tool: string): Promise<void> {
 	});
 }
 
+async function sleep(ms: number): Promise<void> {
+	return new Promise((resolve, _reject) => setTimeout(() => resolve(), ms));
+}
+
 // starts a local OCM kind env and return a promise
 export async function buildLocalEnv() {
 
@@ -39,22 +43,23 @@ export async function buildLocalEnv() {
 	const joinCmd = shell.exec(`kubectl config use ${env.hubContext} && clusteradm init --use-bootstrap-token`).grep('clusteradm'); 
 	
 	console.log('init Join cluster1 to hub');
+	// await sleep(300000);
 	shell.exec(`kubectl config use ${env.cluster1Context}`);
-	const fullJoinCmd = shell.echo( joinCmd ).sed('<cluster_name>', env.cluster1).sed('\n',' ');
+	let fullJoinCmd = shell.echo( joinCmd + ` --force-internal-endpoint-lookup --wait`).sed('<cluster_name>', env.cluster1).sed('\n',' ').toString().replace(/(\r\n|\n|\r)/gm, "");
+	shell.exec(fullJoinCmd);
 
-	shell.exec(fullJoinCmd + ` --force-internal-endpoint-lookup --wait`);
-
+	
 
 	console.log('init Join cluster2 to hub');
+	// await sleep(300000); 	
 	shell.exec(`kubectl config use ${env.cluster2Context}`);
-	const fullJoinCmd2 = shell.echo( joinCmd ).sed('<cluster_name>', env.cluster2).sed('\n',' '); 
+	const fullJoinCmd2 = shell.echo( joinCmd + ` --force-internal-endpoint-lookup --wait` ).sed('<cluster_name>', env.cluster2).sed('\n',' ').toString().replace(/(\r\n|\n|\r)/gm, ""); 
+	shell.exec(fullJoinCmd2 );
 
-	shell.exec(fullJoinCmd2 + ` --force-internal-endpoint-lookup --wait`);
+	// await sleep(300000); 
+	console.log('Accept join of cluster1 and cluster2');
+	shell.echo(`clusteradm accept --clusters ${env.cluster1},${env.cluster2} --wait`);
 
-	await setTimeout(() =>{
-		console.log('Accept join of cluster1 and cluster2');
-		shell.echo(`clusteradm accept --clusters ${env.cluster1},${env.cluster2} --wait`);
-	}, 1000 );
 
 
 }
