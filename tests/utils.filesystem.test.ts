@@ -60,7 +60,7 @@ suite('Test cases for the filesystem utility functions', () => {
 			sinon.stub(fse, 'copy').withArgs(sinon.match.string ,dummyProjectPath).resolves();
 			// then the promise should be rejected
 			return expect(createProjectFromTemplate(dummyWorkspaceFolder, dummyProjectName, 'Git'))
-				.to.be.eventually.fulfilled.and.equals(`OCM extension, project ${dummyProjectName} created`);
+				.to.eventually.be.equal(`OCM extension, project ${dummyProjectName} created`);
 		});
 	});
 });

@@ -26,7 +26,7 @@ suite('Test cases for the environment utility functions', () => {
 			// given the shell utility will resolve the request, indicating the tool was found
 			sinon.stub(shellUtils, 'checkToolExists').withArgs(dummyTool1.name).resolves();
 			// then expect the promise to be resolved with the appropriate message
-			return expect(verifyTools(dummyTool1)).to.eventually.be.fulfilled.and.equals(
+			return expect(verifyTools(dummyTool1)).to.eventually.be.equal(
 				'OCM extension, all tools are accessible, we\'re good to go'
 			);
 		});
@@ -46,7 +46,7 @@ suite('Test cases for the environment utility functions', () => {
 			checkToolExistsStub.withArgs(dummyTool1.name).resolves();
 			checkToolExistsStub.withArgs(dummyTool2.name).resolves();
 			// then expect the promise to be resolved, the and the message consumers to be called accordingly
-			return expect(verifyTools(...[dummyTool1, dummyTool2])).to.eventually.be.fulfilled.and.equals(
+			return expect(verifyTools(...[dummyTool1, dummyTool2])).to.eventually.be.equal(
 				'OCM extension, all tools are accessible, we\'re good to go'
 			);
 		});
@@ -75,7 +75,7 @@ suite('Test cases for the environment utility functions', () => {
 			sinon.stub(shellUtils, 'executeShellCommand').withArgs('clusteradm version').resolves(outputConnectedServer);
 			// then expect the promise to be resolved, the and the message consumers to be called accordingly
 			return expect(parseClusteradmVersion())
-				.to.eventually.be.fulfilled.and.have.members([
+				.to.eventually.have.members([
 					'OCM extension, found clusteradm client version v0.2.0',
 					'OCM extension, found clusteradm server version v1.2.3'
 				]);

@@ -34,7 +34,7 @@ suite('Test cases for the shell utility functions', () => {
 			sinon.stub(shell, 'exec').withArgs(dummyCommand).returns(dummySuccessExecution);
 			// then expect the promise to be resolved with the standard output from the succeeded execution
 			return expect(executeShellCommand(dummyCommand))
-				.to.eventually.be.fulfilled.and.equal(dummySuccessExecution.stdout);
+				.to.eventually.be.equal(dummySuccessExecution.stdout);
 		});
 
 		test('When executing a failed command, the promise should be rejected', async () => {
