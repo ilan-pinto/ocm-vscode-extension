@@ -11,6 +11,10 @@ interface ExpectedTemplate {
 	verifySubscription: CallableFunction
 }
 
+async function sleep(ms: number): Promise<void> {
+	return new Promise((resolve, _reject) => setTimeout(() => resolve(), ms));
+}
+
 // Test cases for the the ocm-vscode-extension.ocmNewProject command
 suite('New-project command Suite', () => {
 	var quickPickStub: sinon.SinonStub;
@@ -64,6 +68,7 @@ suite('New-project command Suite', () => {
 			sinon.stub(vscode.window, 'showInputBox').resolves(projectNameInput);
 			// when invoking the command
 			await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
+			await sleep(500); // wait a sec
 			// then a folder with the project name should be created
 			let pathCreated: boolean = await fse.pathExists(projectFolder);
 			expect(pathCreated).to.be.true;
@@ -93,6 +98,7 @@ suite('New-project command Suite', () => {
 		sinon.stub(vscode.window, 'showInputBox').resolves('');
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
+		await sleep(500); // wait a sec
 		// then a folder with the project name should be created
 		let pathCreated: boolean = await fse.pathExists(projectFolder);
 		expect(pathCreated).to.be.true;
