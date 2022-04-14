@@ -34,10 +34,11 @@ suite('Test cases for the environment utility functions', () => {
 		test('When verifying with one non-existing tool, the promise should be rejected', async () => {
 			// given the shell utility will reject the request, indicating the for tool was NOT found
 			sinon.stub(shellUtils, 'checkToolExists').withArgs(dummyTool2.name).rejects();
-			// then expect the promise to be rejected with the missing tool info
-			return expect(verifyTools(dummyTool2)).to.eventually.be.rejectedWith(
-				`OCM extension, ${dummyTool2.name} is missing, please install it: ${dummyTool2.installUrl}`
-			);
+			// @ts-ignore then expect the promise to be rejected with the missing tool info
+			return expect(verifyTools(dummyTool2)).to.eventually.be.rejectedWith([
+				`OCM extension, ${dummyTool2.name} is missing, please install it`,
+				dummyTool2.installUrl
+			]);
 		});
 
 		test('When verifying with two existing tools, the promise should be resolved', async () => {
@@ -56,10 +57,11 @@ suite('Test cases for the environment utility functions', () => {
 			let checkToolExistsStub = sinon.stub(shellUtils, 'checkToolExists');
 			checkToolExistsStub.withArgs(dummyTool1.name).rejects();
 			checkToolExistsStub.withArgs(dummyTool2.name).resolves();
-			// then expect the promise to be rejected, the and the message consumers to be called accordingly
-			return expect(verifyTools(...[dummyTool1, dummyTool2])).to.eventually.be.rejectedWith(
-				`OCM extension, ${dummyTool1.name} is missing, please install it: ${dummyTool1.installUrl}`
-			);
+			// @ts-ignore then expect the promise to be rejected, the and the message consumers to be called accordingly
+			return expect(verifyTools(...[dummyTool1, dummyTool2])).to.eventually.be.rejectedWith([
+				`OCM extension, ${dummyTool1.name} is missing, please install it`,
+				dummyTool2.installUrl
+			]);
 		});
 	});
 

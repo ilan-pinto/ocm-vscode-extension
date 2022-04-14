@@ -4,11 +4,12 @@ import * as vscode from 'vscode';
 // verify the required tools exists
 export function verifyTools() {
 	environment.verifyTools(...environment.requiredTools)
+		// @ts-ignore
 		.then((msg: string) => vscode.window.showInformationMessage(msg))
-		.catch((msg: string) => vscode.window.showErrorMessage(msg, "Download")
+		.catch((msg: string[]) => vscode.window.showErrorMessage(msg[0], "Install Instructions")
 			.then(answer => {
-				if (answer === "Download") {
-					vscode.env.openExternal(vscode.Uri.parse('https://kind.sigs.k8s.io/docs/user/quick-start/#installation'));
+				if (answer === "Install Instructions") {
+					vscode.env.openExternal(vscode.Uri.parse(msg[1]));
 				}
 			}));
 }

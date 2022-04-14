@@ -29,10 +29,11 @@ export const requiredTools: RequiredTool[] = [
 ];
 
 // verify the the existence of the required tools in the environment's shell
-export async function verifyTools(...tools: RequiredTool[]): Promise<string> {
+// will be resolved with a string or rejected with a string[]
+export async function verifyTools(...tools: RequiredTool[]): Promise<string|string[]> {
 	let executionPromises: Promise<void | string>[] = tools.map(
 		tool => shell.checkToolExists(tool.name).catch(
-			() => Promise.reject(`OCM extension, ${tool.name} is missing, please install it`)
+			() => Promise.reject([`OCM extension, ${tool.name} is missing, please install it`, tool.installUrl])
 		)
 	);
 	return Promise.all(executionPromises)
