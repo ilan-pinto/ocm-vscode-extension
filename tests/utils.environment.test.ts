@@ -8,14 +8,7 @@ import * as shellUtils from '../src/utils/shell';
 chaiUse(chaiAsPromised);
 
 suite('Test cases for the environment utility functions', () => {
-	var successfulLoggerSpy: sinon.SinonSpy;
-	var failedLoggerSpy: sinon.SinonSpy;
-
-	beforeEach(() => {
-		sinon.restore(); // unwrap previously wrapped sinon objects
-		successfulLoggerSpy = sinon.spy(); // wrap a spy around a successful consumer logger callback
-		failedLoggerSpy = sinon.spy(); // wrap a spy around a failed consumer logger callback
-	});
+	beforeEach(() => sinon.restore()); // unwrap previously wrapped sinon objects
 
 	suite('Testing verifyTools', () => {
 		// dummy tools used for testing purposes
@@ -32,28 +25,19 @@ suite('Test cases for the environment utility functions', () => {
 		test('When verifying with one existing tool, the successful logger should be called', async () => {
 			// given the shell utility will resolve the request, indicating the tool was found
 			sinon.stub(shellUtils, 'checkToolExists').withArgs(dummyTool1.name).resolves();
-			// then expect the promise to be resolved, the and the message consumers to be called accordingly
-			return expect(verifyTools(successfulLoggerSpy, failedLoggerSpy, dummyTool1))
-				.to.eventually.be.fulfilled
-				.then(() => {
-					expect(successfulLoggerSpy.calledOnceWith(
-						'OCM extension, all tools are accessible, we\'re good to go')).to.be.true;
-					expect(failedLoggerSpy.notCalled).to.be.true;
-				});
+			// then expect the promise to be resolved with the appropriate message
+			return expect(verifyTools(dummyTool1)).to.eventually.be.fulfilled.and.equals(
+				'OCM extension, all tools are accessible, we\'re good to go'
+			);
 		});
 
 		test('When verifying with one non-existing tool, the failure logger should be called', async () => {
 			// given the shell utility will reject the request, indicating the for tool was NOT found
 			sinon.stub(shellUtils, 'checkToolExists').withArgs(dummyTool2.name).rejects();
-			// then expect the promise to be rejected, the and the message consumers to be called accordingly
-			return expect(verifyTools(successfulLoggerSpy, failedLoggerSpy, dummyTool2))
-				.to.eventually.be.rejected
-				.then(() => {
-					expect(successfulLoggerSpy.notCalled).to.be.true;
-					expect(failedLoggerSpy.calledTwice).to.be.true;
-					expect(failedLoggerSpy.firstCall.firstArg).to.equal(`OCM extension, ${dummyTool2.name} is missing, please install it: ${dummyTool2.installUrl}`);
-					expect(failedLoggerSpy.lastCall.firstArg).to.equal('OCM extension, we\'re missing some tools');
-				});
+			// then expect the promise to be rejected with the missing tool info
+			return expect(verifyTools(dummyTool2)).to.eventually.be.rejectedWith(
+				`OCM extension, ${dummyTool2.name} is missing, please install it: ${dummyTool2.installUrl}`
+			);
 		});
 
 		test('When verifying with two existing tools, the successful logger should be called', async () => {
@@ -62,13 +46,9 @@ suite('Test cases for the environment utility functions', () => {
 			checkToolExistsStub.withArgs(dummyTool1.name).resolves();
 			checkToolExistsStub.withArgs(dummyTool2.name).resolves();
 			// then expect the promise to be resolved, the and the message consumers to be called accordingly
-			return expect(verifyTools(successfulLoggerSpy, failedLoggerSpy, dummyTool1))
-				.to.eventually.be.fulfilled
-				.then(() => {
-					expect(failedLoggerSpy.notCalled).to.be.true;
-					expect(successfulLoggerSpy.calledOnceWith(
-						'OCM extension, all tools are accessible, we\'re good to go')).to.be.true;
-				});
+			return expect(verifyTools(...[dummyTool1, dummyTool2])).to.eventually.be.fulfilled.and.equals(
+				'OCM extension, all tools are accessible, we\'re good to go'
+			);
 		});
 
 		test('When verifying with two tools, but only one exists, the failure logger should be called', async () => {
@@ -77,14 +57,9 @@ suite('Test cases for the environment utility functions', () => {
 			checkToolExistsStub.withArgs(dummyTool1.name).rejects();
 			checkToolExistsStub.withArgs(dummyTool2.name).resolves();
 			// then expect the promise to be rejected, the and the message consumers to be called accordingly
-			return expect(verifyTools(successfulLoggerSpy, failedLoggerSpy, ...[dummyTool1, dummyTool2]))
-				.to.eventually.be.rejected
-				.then(() => {
-					expect(successfulLoggerSpy.notCalled).to.be.true;
-					expect(failedLoggerSpy.calledTwice).to.be.true;
-					expect(failedLoggerSpy.firstCall.firstArg).to.equal(`OCM extension, ${dummyTool1.name} is missing, please install it: ${dummyTool1.installUrl}`);
-					expect(failedLoggerSpy.lastCall.firstArg).to.equal('OCM extension, we\'re missing some tools');
-				});
+			return expect(verifyTools(...[dummyTool1, dummyTool2])).to.eventually.be.rejectedWith(
+				`OCM extension, ${dummyTool1.name} is missing, please install it: ${dummyTool1.installUrl}`
+			);
 		});
 	});
 
@@ -99,18 +74,11 @@ suite('Test cases for the environment utility functions', () => {
 			// given the version command will resolved to a correct output
 			sinon.stub(shellUtils, 'executeShellCommand').withArgs('clusteradm version').resolves(outputConnectedServer);
 			// then expect the promise to be resolved, the and the message consumers to be called accordingly
-			return expect(parseClusteradmVersion(successfulLoggerSpy, failedLoggerSpy))
-				.to.eventually.be.fulfilled
-				.then(() => {
-					expect(successfulLoggerSpy.calledTwice).to.be.true;
-					expect(successfulLoggerSpy.firstCall.firstArg).to.equal(
-						'OCM extension, found clusteradm client version v0.2.0'
-					);
-					expect(successfulLoggerSpy.lastCall.firstArg).to.equal(
-						'OCM extension, found clusteradm server version v1.2.3'
-					);
-					expect(failedLoggerSpy.notCalled).to.be.true;
-				});
+			return expect(parseClusteradmVersion())
+				.to.eventually.be.fulfilled.and.have.members([
+					'OCM extension, found clusteradm client version v0.2.0',
+					'OCM extension, found clusteradm server version v1.2.3'
+				]);
 		});
 
 		test('When failed to get clusteradm version, the reject error should be displayed', async () => {
@@ -120,26 +88,16 @@ suite('Test cases for the environment utility functions', () => {
 			let rejectMessage = 'You are not elias\'s younger brother';
 			sinon.stub(shellUtils, 'executeShellCommand').withArgs('clusteradm version').rejects(rejectMessage);
 			// then expect the promise to be rejected, the and the message consumers to be called accordingly
-			return expect(parseClusteradmVersion(successfulLoggerSpy, failedLoggerSpy))
-				.to.eventually.be.rejected
-				.then(() => {
-					expect(successfulLoggerSpy.notCalled).to.be.true;
-					expect(failedLoggerSpy.calledOnceWith(
-						`OCM extension, unable to detect clusteradm version: ${rejectMessage}`
-					)).to.be.true;
-				});
+			return expect(parseClusteradmVersion()).to.eventually.be.rejectedWith(
+				`OCM extension, unable to detect clusteradm version: ${rejectMessage}`);
 		});
 
 		test('When clusteradm is not installed, an error should be displayed', async () => {
 			// given the clusteradm tool does NOT exists
 			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').rejects();
 			// then expect the promise to be rejected, the and the message consumers to be called accordingly
-			return expect(parseClusteradmVersion(successfulLoggerSpy, failedLoggerSpy))
-				.to.eventually.be.rejected
-				.then(() => {
-					expect(successfulLoggerSpy.notCalled).to.be.true;
-					expect(failedLoggerSpy.calledOnceWith('OCM extension, looks like clusteradm is not installed')).to.be.true;
-				});
+			return expect(parseClusteradmVersion()).to.eventually.be.rejectedWith(
+				'OCM extension, looks like clusteradm is not installed');
 		});
 	});
 });
