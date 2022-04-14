@@ -8,10 +8,10 @@ import { checkToolExists, executeShellCommand } from '../src/utils/shell';
 chaiUse(chaiAsPromised);
 
 suite('Test cases for the shell utility functions', () => {
-	suite('Testing checkToolExists', () => {
-		beforeEach(() => sinon.restore());
+	beforeEach(() => sinon.restore()); // unwrap any previously wrapped sinon objects
 
-		test('When checking with an existing tool, the promise should be fulfilled', async () => {
+	suite('Testing checkToolExists', () => {
+		test('When checking with an existing tool, the promise should be resolved', async () => {
 			// @ts-ignore given the command in question exists
 			sinon.stub(shell, 'exec').withArgs('command -v existing-tool').returns({code: 0});
 			// then expect the promise to be resolved
@@ -27,9 +27,7 @@ suite('Test cases for the shell utility functions', () => {
 	});
 
 	suite('Testing executeShellCommand', () => {
-		beforeEach(() => sinon.restore()); // unwrap any previously wrapped sinon objects
-
-		test('When executing a successful command, the promise should be fulfilled with the stdout', async () => {
+		test('When executing a successful command, the promise should be resolved', async () => {
 			let dummyCommand = 'dummy-successful-command';
 			let dummySuccessExecution = {code: 0, stdout: 'all is good in the hood'}; // note stdout and not stderr
 			// @ts-ignore given the dummy success execution will return for the dummy command
@@ -39,7 +37,7 @@ suite('Test cases for the shell utility functions', () => {
 				.to.eventually.be.fulfilled.and.equal(dummySuccessExecution.stdout);
 		});
 
-		test('When executing a failed command, the promise should be rejected with the stderr', async () => {
+		test('When executing a failed command, the promise should be rejected', async () => {
 			let dummyCommand = 'dummy-failed-command';
 			let dummyFailedExecution = {code: 999, stderr: 'oh my god they killed kenny'}; // note stderr and not stdout
 			// @ts-ignore given the dummy failed execution will return for the dummy command
