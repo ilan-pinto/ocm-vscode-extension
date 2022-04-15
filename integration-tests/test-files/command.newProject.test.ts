@@ -170,7 +170,7 @@ Assertion.addMethod('channelOfType', async function(expectedType: string) {
 	let foundKind = channelResource['kind'];
 	this.assert(
 		foundKind === 'Channel',
-		'expected the resource to be of kind #{exp} but got #{act}',
+		'expected the resource to be of kind Channel but got #{act}',
 		'expected the resource to not be of kind #{act}',
 		expectedType,
 		foundKind

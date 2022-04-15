@@ -144,6 +144,7 @@
 		"clean:all": "npm run clean && npm run clean-ext && npm run clean-test-ws",
 		"preintegration-tests": "npm run compile",
 		"integration-tests": "node ./out/integration-tests/runSuite.js",
+		"it": "npm run integration-tests",
 		"build": "npm run lint && npm run tests:cov",
 		"clean:build": "npm run clean && npm run build",
 		"vsce:package": "vsce package",
