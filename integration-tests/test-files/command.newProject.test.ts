@@ -1,4 +1,4 @@
-import { Assertion, expect, use as chaiUse } from 'chai';
+import { expect, use as chaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as fse from 'fs-extra';
 import * as yaml from 'js-yaml';
@@ -6,8 +6,10 @@ import { beforeEach } from 'mocha';
 import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
+import { loadHelpers as loadResourceHelpers } from '../helpers/resourceHelpers';
 
 chaiUse(chaiAsPromised);
+loadResourceHelpers();
 
 interface ExpectedTemplate {
 	channelType: string,
@@ -71,6 +73,9 @@ suite('New-project command Suite', () => {
 			// when invoking the command
 			await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 			await sleep(projectCreationDelayMS); // wait a sec
+			// grab the resource files
+			let channel = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
+			let subscription = yaml.load(await fse.readFile(`${projectFolder}/subscription.yaml`, 'utf-8'));
 			return Promise.all([
 				// then a folder with the project name should be created
 				expect(fse.pathExists(projectFolder)).to.eventually.be.true,
@@ -78,10 +83,12 @@ suite('New-project command Suite', () => {
 				expect(fse.readdir(projectFolder)).to.eventually.have.members(expectedTemplateFiles),
 				// then a proper info message should be displayed to the user
 				expect(infoBoxSpy.firstCall.firstArg).to.equal(`OCM extension, project ${projectNameInput} created`),
-				// @ts-ignore then the channel resource type is the expected type
-				expect(`${projectFolder}/channel.yaml`).to.be.channelOfType(sut.channelType),
+				// then the channel resource kind should be channel
+				expect(channel).to.have.resourceKind('Channel'),
+				// the the channel resource spec type should be as expected
+				expect(channel).to.have.specType(sut.channelType),
 				// then verify using the dynamic verification method
-				sut.verifySubscription(yaml.load(await fse.readFile(`${projectFolder}/subscription.yaml`, 'utf-8')))
+				sut.verifySubscription(subscription)
 			]);
 		});
 	});
@@ -98,6 +105,8 @@ suite('New-project command Suite', () => {
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		await sleep(projectCreationDelayMS); // wait a sec
+		// grab the resource files
+		let channel = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
 		return Promise.all([
 			// then a folder with the project name should be created
 			expect(fse.pathExists(projectFolder)).to.eventually.be.true,
@@ -105,8 +114,10 @@ suite('New-project command Suite', () => {
 			expect(fse.readdir(projectFolder)).to.eventually.have.members(expectedTemplateFiles),
 			// then a proper info message should be displayed to the user
 			expect(infoBoxSpy.firstCall.firstArg).to.equal('OCM extension, project ocm-application created'),
-			// @ts-ignore then the channel resource type is the expected type
-			expect(`${projectFolder}/channel.yaml`).to.be.channelOfType('Git')
+			// then the channel resource kind should be channel
+			expect(channel).to.have.resourceKind('Channel'),
+			// the the channel resource spec type should be Git
+			expect(channel).to.have.specType('Git'),
 		]);
 	});
 
@@ -159,37 +170,12 @@ suite('New-project command Suite', () => {
 	});
 });
 
-/* ########################################### ##
-## Template Verification Helpers and Functions ##
-## ######################################### ##*/
-Assertion.addMethod('channelOfType', async function(expectedType: string) {
-	let yamlPath = this._obj;
-	let channelResource = yaml.load(await fse.readFile(yamlPath, 'utf-8'));
-
-	// @ts-ignore
-	let foundKind = channelResource['kind'];
-	this.assert(
-		foundKind === 'Channel',
-		'expected the resource to be of kind Channel but got #{act}',
-		'expected the resource to not be of kind #{act}',
-		expectedType,
-		foundKind
-	);
-
-	// @ts-ignore
-	let foundType = channelResource['spec']['type'];
-	this.assert(
-		foundType === expectedType,
-		'expected the channel to be of type #{exp} but got #{act}',
-		'expected the channel to not be of type #{act}',
-		expectedType,
-		foundType
-	);
-});
-
+/* ############################### ##
+## Template Verification Functions ##
+## ############################# ##*/
 function verifyGitSubscription(subscriptionYaml: any): void {
 	// verify kind
-	expect(subscriptionYaml['kind']).to.equal('Subscription');
+	expect(subscriptionYaml).to.have.resourceKind('Subscription');
 	// verify metadata keys
 	expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
 	// verify metadata annotations
@@ -208,7 +194,7 @@ function verifyGitSubscription(subscriptionYaml: any): void {
 
 function verifyHelmRepoSubscription(subscriptionYaml: any): void {
 	// verify kind
-	expect(subscriptionYaml['kind']).to.equal('Subscription');
+	expect(subscriptionYaml).to.have.resourceKind('Subscription');
 	// verify metadata keys
 	expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
 	// verify metadata annotations
@@ -225,7 +211,7 @@ function verifyHelmRepoSubscription(subscriptionYaml: any): void {
 
 function verifyObjectBucketSubscription(subscriptionYaml: any): void {
 	// verify kind
-	expect(subscriptionYaml['kind']).to.equal('Subscription');
+	expect(subscriptionYaml).to.have.resourceKind('Subscription');
 	// verify metadata keys
 	expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
 	// verify metadata annotations
