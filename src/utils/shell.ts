@@ -1,3 +1,4 @@
+import cluster from 'cluster';
 import * as shell from 'shelljs' ;
 import * as env from './environment';
 
@@ -30,36 +31,57 @@ async function sleep(ms: number): Promise<void> {
 }
 
 // starts a local OCM kind env and return a promise
-export async function buildLocalEnv() {
-
+export function buildLocalEnv() {
 	// TODO - check docker/podman engine is active
 
+	initClusters(env.clusters);
+	const joinCmd = initHub(); 	
+	joinClusters(joinCmd, env.clusters );	
+	approveClusters(env.clusters);
+}
+
+
+// init kind clusters 
+function initClusters(clusters: Array<env.Cluster>) {
+
 	console.log('creating clusters');
-	shell.exec('kind create cluster --name ' + env.hub); 
-	shell.exec('kind create cluster --name ' + env.cluster1); 
-	shell.exec('kind create cluster --name ' + env.cluster2);
+	clusters.forEach(cluster => {
+		shell.exec('kind create cluster --name ' + cluster.clusterName);	
+	});
+}
 
+// init hub cluster and return join command 
+function initHub() {
 	console.log('init hub');
-	const joinCmd = shell.exec(`kubectl config use ${env.hubContext} && clusteradm init --use-bootstrap-token`).grep('clusteradm'); 
-	
-	console.log('init Join cluster1 to hub');
-	// await sleep(300000);
-	shell.exec(`kubectl config use ${env.cluster1Context}`);
-	let fullJoinCmd = shell.echo( joinCmd + ` --force-internal-endpoint-lookup --wait`).sed('<cluster_name>', env.cluster1).sed('\n',' ').toString().replace(/(\r\n|\n|\r)/gm, "");
-	shell.exec(fullJoinCmd);
+	const joinCmd = shell.exec(`kubectl config use ${env.hubContext} && clusteradm init --use-bootstrap-token`).grep('clusteradm');
+	return joinCmd;
+}
 
-	
+// join spoke clusters 
+function joinClusters(joinCmd: shell.ShellString , clusters: Array<env.Cluster>) {
 
-	console.log('init Join cluster2 to hub');
-	// await sleep(300000); 	
-	shell.exec(`kubectl config use ${env.cluster2Context}`);
-	const fullJoinCmd2 = shell.echo( joinCmd + ` --force-internal-endpoint-lookup --wait` ).sed('<cluster_name>', env.cluster2).sed('\n',' ').toString().replace(/(\r\n|\n|\r)/gm, ""); 
-	shell.exec(fullJoinCmd2 );
+	clusters.filter( cluster => cluster.type === "Spoke").forEach(cluster => {
+		console.log('init Join ' + cluster.clusterName + ' to hub');
+		shell.exec(`kubectl config use ${cluster.clusterContext}`);
+		let fullJoinCmd = shell.echo(joinCmd + ` --force-internal-endpoint-lookup --wait`).sed('<cluster_name>', cluster.clusterName).sed('\n', ' ').toString().replace(/(\r\n|\n|\r)/gm, "");
+		shell.exec(fullJoinCmd);		
+	});
 
-	// await sleep(300000); 
-	console.log('Accept join of cluster1 and cluster2');
-	shell.echo(`clusteradm accept --clusters ${env.cluster1},${env.cluster2} --wait`);
+}
+
+// hub approve spokes 
+function approveClusters(clusters: Array<env.Cluster> ) {
+	clusters
+	.filter( cluster =>	cluster.type === "Hub")
+	.forEach(cluster => {		 
+		shell.exec(`kubectl config use  ` + cluster.clusterContext );
+	});
 
 
-
+	clusters
+		.filter( cluster => cluster.type === "Spoke")
+		.forEach(cluster => {
+			console.log('Accept join of: ' + cluster.clusterName );
+			let res = shell.exec(`clusteradm accept --clusters ` + cluster.clusterName );				
+		});
 }

@@ -8,6 +8,32 @@ export const hubContext = `kind-${hub}`;
 export const cluster1Context = `kind-${cluster1}`;
 export const cluster2Context = `kind-${cluster2}`;
 
+
+export interface Cluster {
+	clusterName: string,
+	clusterContext: string
+	type: string //Hub or Spoke
+}
+
+export let clusters: Array<Cluster> = [
+	{
+		"clusterName": hub,
+		"clusterContext": hubContext,
+		"type": "Hub"
+	}, 
+	{
+		"clusterName": cluster2,
+		"clusterContext": cluster2Context,
+		"type": "Spoke"
+	},
+	{ 
+		"clusterName": cluster1,
+		"clusterContext": cluster1Context,
+		"type": "Spoke"
+	}, 
+];
+
+
 export interface RequiredTool {
 	name: string,
 	installUrl: string
