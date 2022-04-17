@@ -63,7 +63,8 @@ export async function verifyTools(...tools: RequiredTool[]): Promise<string|stri
 		)
 	);
 	return Promise.all(executionPromises)
-		.then(() => Promise.resolve('OCM extension, all tools are accessible, we\'re good to go'));
+		.then(() => Promise.resolve('OCM extension, all tools are accessible, we\'re good to go'))
+		.catch( (err) =>  Promise.reject(err) );
 }
 
 // parse the locally installed clusteradm client and server version
