@@ -102,4 +102,46 @@ suite('Test cases for the environment utility functions', () => {
 				'OCM extension, looks like clusteradm is not installed');
 		});
 	});
+
+
+	suite('Testing local environment creation ', () => {
+
+		test('When initializing cluster, the promise should be resolved', async () => { 
+
+
+		} ); 
+
+		test('When initializing cluster and cluster name exists, the promise should be rejected', async () => { 
+
+
+		} ); 
+
+		test('When initializing hub, the promise should be resolved and return a string', async () => { 
+
+
+		} ); 
+
+		test('When joining clusters spoke , the promise should be resolved and all clusters should be joined' , async () => { 
+
+
+		} ); 
+
+		test('When joining clusters and no spoke ,  promise should be approved  and all clusters should be joined' , async () => { 
+
+
+		} );
+
+		test('When approving clusters and no spoke , the promise should be rejected' , async () => { 
+
+
+		} );
+
+		test('When approving clusters and no spoke , the promise should be rejected' , async () => { 
+
+
+		} ); 
+
+
+	}); 
+
 });

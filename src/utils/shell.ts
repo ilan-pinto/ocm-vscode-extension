@@ -66,7 +66,7 @@ function initHub(): Promise<string> {
 function joinClusters(joinCmd: string , clusters: Array<env.Cluster>) : Promise<string> {
 
 	return new Promise ((resolve, reject) => {
-
+		// to do trigger promises in parallel and use promise all to resolve 
 		clusters.filter( cluster => cluster.type === "Spoke").forEach(cluster => {
 			console.log('init Join ' + cluster.clusterName + ' to hub');
 			shell.exec(`kubectl config use ${cluster.clusterContext}`);
