@@ -7,15 +7,27 @@ import { resolve } from 'path';
 shell.config.execPath = String(shell.which('node'));
 
 // execute a command and return a promise of the output as string
-export function executeShellCommand(command: string): Promise<string> {
+export function executeShellCommand(command: string, async: boolean = false): Promise<string> {
     return new Promise((resolve, reject) => {
-		let execution = shell.exec(command);
-		if (execution.code === 0) {
-			resolve(execution.stdout);
+
+			if (async) {
+				shell.exec(command, (code,stdout,stderr) => {	
+						if (code === 0) {
+					resolve(stdout);
+				}
+				reject(stderr);});
+			}
+			else {
+				let execution = shell.exec(command);
+				if (execution.code === 0) {
+					resolve(execution.stdout);
+				}
+			reject(execution.stderr);
+			}
 		}
-		reject(execution.stderr);
-	});
+	);
 }
+
 
 
 export function switchContext(cluster: env.Cluster) {
@@ -42,7 +54,7 @@ function initClusters(clusters: Array<env.Cluster>):  Promise<void|string[]> {
 
 	console.debug('creating clusters');
 	let executionPromises = clusters.map(
-		cluster => executeShellCommand('kind create cluster --name ' + cluster.clusterName).catch(
+		cluster => executeShellCommand('kind create cluster --name ' + cluster.clusterName,true).catch(
 			(err) => Promise.reject([`unable to create cluster: ` + cluster.clusterName + ` ` + err ])
 		)
 	);	
@@ -67,7 +79,7 @@ function initHub(): Promise<string> {
 // join spoke clusters 
 function joinClusters(joinCmd: string , clusters: Array<env.Cluster>) :  Promise<void|string[]> {	
 
-		let executionPromises =clusters.filter( cluster => cluster.type === "Spoke").map(cluster => {
+		let executionPromises = clusters.filter( cluster => cluster.type === "Spoke").map(cluster => {
 			joinCluster(cluster, joinCmd);			
 		});
 
@@ -79,15 +91,11 @@ function joinClusters(joinCmd: string , clusters: Array<env.Cluster>) :  Promise
 }
 
 function joinCluster(cluster: env.Cluster, joinCmd: string): Promise<string> {
-	return new Promise( (resolve,reject) => { 
+	return new Promise( () => { 
 		console.debug('init Join ' + cluster.clusterName + ' to hub');
 		switchContext(cluster);
 		let fullJoinCmd = shell.echo(joinCmd + ` --force-internal-endpoint-lookup --wait`).sed('<cluster_name>', cluster.clusterName).sed('\n', ' ').toString().replace(/(\r\n|\n|\r)/gm, "");
-		let res = shell.exec(fullJoinCmd);
-		if (res.code === 0) {
-			resolve(res);
-		}
-		reject(res.stderr);
+		executeShellCommand(fullJoinCmd);
 	});
 }
 
@@ -95,17 +103,17 @@ function joinCluster(cluster: env.Cluster, joinCmd: string): Promise<string> {
 function approveClusters(clusters: Array<env.Cluster> ) : Promise<void|string[]> {
 	// switch context to hub 
 	const hub = clusters.find( cluster => cluster.type === "Hub") ;
-	if (hub !== undefined) 
-		{ switchContext(hub);}  
-	else {
-		throw new Error("unable to find hub cluster");		
-	}	
+	if (hub === undefined) 
+		{ throw new Error("unable to find hub cluster");
+	} 
+
 	
 	let executionPromises = clusters
 		.filter(cluster => cluster.type === "Spoke")
 		.map(cluster => {		
 				console.debug('Accept join of: ' + cluster.clusterName);
-				executeShellCommand( `clusteradm accept --clusters ` + cluster.clusterName);
+				switchContext(hub);
+				executeShellCommand( `clusteradm accept --clusters ` + cluster.clusterName,true);
 	});
 
 	return Promise.all(executionPromises)
