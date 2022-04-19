@@ -32,7 +32,7 @@
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.getClusteradmVersion",
-		"onCommand:ocm-vscode-extension.buildLocalClusters",
+		"onCommand:ocm-vscode-extension.createLocalEnvironment",
 		"onView:ocm.explorer"
 	],
 	"main": "./out/src/extension.js",
@@ -45,7 +45,7 @@
 			},
 			{
 				"command": "ocm-vscode-extension.verifyTools",
-				"title": "Verify required tools existence",
+				"title": "Verify development tools existence",
 				"category": "OCM"
 			},
 			{
@@ -54,8 +54,8 @@
 				"category": "OCM"
 			},
 			{
-				"command": "ocm-vscode-extension.buildLocalClusters",
-				"title": "Build local clusters",
+				"command": "ocm-vscode-extension.",
+				"title": "Build local development environment",
 				"category": "OCM"
 			}
 		],
@@ -91,7 +91,7 @@
 		"viewsWelcome": [
 			{
 				"view": "forDevelopers",
-				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.getClusteradmVersion)\n [Verify Tools Existence](command:ocm-vscode-extension.verifyTools) \n  [Start Local Clusters](command:ocm-vscode-extension.buildLocalClusters)"
+				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.getClusteradmVersion)\n[Verify Development Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
 			}
 		],
 		"menus": {
@@ -157,8 +157,10 @@
 		"tests:cov-rep": "npm run test:cov-rep"
 	},
 	"dependencies": {
+		"@types/lodash": "^4.14.182",
 		"@types/shelljs": "^0.8.11",
 		"fs-extra": "^10.0.1",
+		"lodash": "^4.17.21",
 		"shelljs": "0.8.5"
 	},
 	"devDependencies": {

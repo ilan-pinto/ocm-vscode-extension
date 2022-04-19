@@ -9,7 +9,7 @@ const extName = 'ocm-vscode-extension';
 const cmdNewProjectName = 'ocmNewProject';
 const cmdVerifyTools = 'verifyTools';
 const cmdGetClusteradmVersion = 'getClusteradmVersion';
-const cmdBuildLocalClusters = 'buildLocalClusters';
+const cmdBuildLocalClusters = 'createLocalEnvironment';
 
 // DISPOSABLES
 const cmdNewProjectDisposable = vscode.commands.registerCommand(
@@ -25,7 +25,7 @@ const cmdClusteradmVersionDisposable = vscode.commands.registerCommand(
 );
 
 const cmdBuildLocalClusterDisposable = vscode.commands.registerCommand(
-	`${extName}.${cmdBuildLocalClusters}`, () => createEnvironment.buildLocalClusters()
+	`${extName}.${cmdBuildLocalClusters}`, () => createEnvironment.createLocalEnvironment()
 );
 
 // EXPORTS
@@ -34,6 +34,6 @@ export function activate(context: vscode.ExtensionContext) {
 		cmdNewProjectDisposable, // command: ocm-vscode-extension.ocmNewProject
 		cmdVerifyToolsDisposable, // command: ocm-vscode-extension.verifyTools
 		cmdClusteradmVersionDisposable, // command: ocm-vscode-extension.getClusteradmVersion
-		cmdBuildLocalClusterDisposable // command: ocm-vscode-extension.buildLocalClusters
+		cmdBuildLocalClusterDisposable // command: ocm-vscode-extension.createLocalEnvironment
 	);
 }
