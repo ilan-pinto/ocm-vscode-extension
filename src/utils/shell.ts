@@ -1,8 +1,8 @@
-import cluster from 'cluster';
-import { resolve } from 'path';
+
 import * as shell from 'shelljs' ;
 import * as env from './environment';
 import * as vscode from 'vscode';
+import { resolve } from 'path';
 
 shell.config.execPath = String(shell.which('node'));
 
@@ -15,6 +15,11 @@ export function executeShellCommand(command: string): Promise<string> {
 		}
 		reject(execution.stderr);
 	});
+}
+
+
+export function switchContext(cluster: env.Cluster) {
+	shell.exec(`kubectl config use ${cluster.clusterContext}`);
 }
 
 // check if a cli tool exists and return a promise
@@ -32,27 +37,24 @@ export async function sleep(ms: number): Promise<void> {
 	return new Promise((resolve, _reject) => setTimeout(() => resolve(), ms));
 }
 
-
 // init kind clusters 
-function initClusters(clusters: Array<env.Cluster>): Promise<string> {
+function initClusters(clusters: Array<env.Cluster>):  Promise<void|string[]> {
 
-	console.log('creating clusters');
-	return new Promise ((resolve, reject) => { 
-		clusters.forEach(cluster => {
-			let res = shell.exec('kind create cluster --name ' + cluster.clusterName);
-			if ( res.code === 0) { 
-
-				console.log( cluster.clusterName + ' cluster created ');
-				resolve("done");
-			} 	
-			reject(res.stderr);
-		});
-	} ); 
+	console.debug('creating clusters');
+	let executionPromises = clusters.map(
+		cluster => executeShellCommand('kind create cluster --name ' + cluster.clusterName).catch(
+			(err) => Promise.reject([`unable to create cluster: ` + cluster.clusterName + ` ` + err ])
+		)
+	);	
+	return Promise.all(executionPromises)
+		.then( () => Promise.resolve())
+		.catch((err)=> Promise.reject(err)
+	);
 }
 
-// init hub cluster and return join command 
+// init hub cluster and return join command  
 function initHub(): Promise<string> {
-	console.log('init hub');
+	console.debug('init hub');
 	return new Promise ((resolve, reject) => {
 		let res = shell.exec(`kubectl config use ${env.hubContext} && clusteradm init --use-bootstrap-token`).grep('clusteradm');
 		if ( res.code === 0) { 		
@@ -63,49 +65,53 @@ function initHub(): Promise<string> {
 }
 
 // join spoke clusters 
-function joinClusters(joinCmd: string , clusters: Array<env.Cluster>) : Promise<string> {
+function joinClusters(joinCmd: string , clusters: Array<env.Cluster>) :  Promise<void|string[]> {	
 
-	return new Promise ((resolve, reject) => {
-		// to do trigger promises in parallel and use promise all to resolve 
-		clusters.filter( cluster => cluster.type === "Spoke").forEach(cluster => {
-			console.log('init Join ' + cluster.clusterName + ' to hub');
-			shell.exec(`kubectl config use ${cluster.clusterContext}`);
-			let fullJoinCmd = shell.echo(joinCmd + ` --force-internal-endpoint-lookup --wait`).sed('<cluster_name>', cluster.clusterName).sed('\n', ' ').toString().replace(/(\r\n|\n|\r)/gm, "");
-			let res = shell.exec(fullJoinCmd); 
-			if ( res.code === 0) { 		
-				resolve(res);
-			} 	
-			reject(res.stderr);
-			
+		let executionPromises =clusters.filter( cluster => cluster.type === "Spoke").map(cluster => {
+			joinCluster(cluster, joinCmd);			
 		});
 
-	});
+		return Promise.all(executionPromises)
+			.then( () => Promise.resolve())
+			.catch((err)=> Promise.reject(err)
+	);
 
 }
 
-// hub approve spokes 
-function approveClusters(clusters: Array<env.Cluster> ) : Promise<string> {
-
-	return new Promise ((resolve, reject) => {
-		clusters
-		.filter( cluster =>	cluster.type === "Hub")
-		.forEach(cluster => {		 
-			shell.exec(`kubectl config use  ` + cluster.clusterContext );
-		});
-	
-	
-		clusters
-			.filter( cluster => cluster.type === "Spoke")
-			.forEach(cluster => {
-				console.log('Accept join of: ' + cluster.clusterName );
-				let res = shell.exec(`clusteradm accept --clusters ` + cluster.clusterName );
-				if ( res.code === 0) { 		
-					resolve(res);
-				} 	
-				reject(res.stderr);				
-		});
-		resolve("done");
+function joinCluster(cluster: env.Cluster, joinCmd: string): Promise<string> {
+	return new Promise( (resolve,reject) => { 
+		console.debug('init Join ' + cluster.clusterName + ' to hub');
+		switchContext(cluster);
+		let fullJoinCmd = shell.echo(joinCmd + ` --force-internal-endpoint-lookup --wait`).sed('<cluster_name>', cluster.clusterName).sed('\n', ' ').toString().replace(/(\r\n|\n|\r)/gm, "");
+		let res = shell.exec(fullJoinCmd);
+		if (res.code === 0) {
+			resolve(res);
+		}
+		reject(res.stderr);
 	});
+}
+
+// hub approve spokes 
+function approveClusters(clusters: Array<env.Cluster> ) : Promise<void|string[]> {
+	// switch context to hub 
+	const hub = clusters.find( cluster => cluster.type === "Hub") ;
+	if (hub !== undefined) 
+		{ switchContext(hub);}  
+	else {
+		throw new Error("unable to find hub cluster");		
+	}	
+	
+	let executionPromises = clusters
+		.filter(cluster => cluster.type === "Spoke")
+		.map(cluster => {		
+				console.debug('Accept join of: ' + cluster.clusterName);
+				executeShellCommand( `clusteradm accept --clusters ` + cluster.clusterName);
+	});
+
+	return Promise.all(executionPromises)
+		.then( () => Promise.resolve())
+		.catch((err)=> Promise.reject(err));
+
 }
 
 
@@ -117,7 +123,6 @@ export function buildLocalEnv( progress: vscode.Progress<{
 }> ): Promise<void>
 {
 // TODO - check docker/podman engine is active
-
 return new Promise ( async (resolve, reject) => { 
 	try { 
 		progress.report( { increment: 5 , message: "creating kind clusters (2 min)" }); 
