@@ -1,6 +1,8 @@
 
 import * as shellTools from './shell';
 
+const blankLines = new RegExp(/(^[ \t]*\r?\n)/, "gm");
+
 export enum ClusterType {
 	hub, managed
 }
@@ -44,8 +46,8 @@ async function createKindCluster(cluster: Cluster):  Promise<string> {
 async function initializeHubCluster(hubCluster: Cluster): Promise<string> {
 	console.debug(`initializing the hub cluster named ${hubCluster.name}`);
 	return shellTools.executeShellCommand(`kubectl config use ${hubCluster.context}`)
-		// TODO: replace shell's grep with code to avoid os incompatibility
-		.then(() => shellTools.executeShellCommand('clusteradm init --use-bootstrap-token | grep clusteradm'));
+		.then(() => shellTools.executeShellCommand('clusteradm init --use-bootstrap-token'))
+		.then((stdout: string) => stdout.replace(blankLines, '').split(/\r?\n/)[2].trim());
 }
 
 // issue a join command from a managed cluster using a join command
@@ -68,7 +70,7 @@ async function acceptJoinRequests(hubCluster: Cluster, managedClusters: Cluster[
 export async function buildLocalEnv(
 	clusters: Cluster[], progressReporter: (r: ProgressReport) => void): Promise<string> {
 
-	console.debug('starting local development environment build');
+	console.debug('starting local environment build');
 	return new Promise((resolve, reject) => {
 		let hubClusters = clusters.filter(c => c.type === ClusterType.hub);
 		let managedClusters = clusters.filter(c => c.type === ClusterType.managed);
@@ -109,9 +111,9 @@ export async function buildLocalEnv(
 								acceptJoinRequests(hubCluster, managedClusters)
 									.then(() => {
 										console.debug('accepted join requests successfully');
-										progressReporter({increment: 100 , message: 'successfully created your development environment, have fun'});
+										progressReporter({increment: 100 , message: 'successfully created your local environment, have fun'});
 										// TODO: display the user with information about the created clusters: names/contexts
-										resolve('OCM extension, successfully created your development environment, have fun');
+										resolve('OCM extension, successfully created your local environment, have fun');
 									})
 									.catch((stderr) => {
 										console.debug('failed to accept join requests');
@@ -135,8 +137,8 @@ export async function buildLocalEnv(
 				})
 				.catch(() => {
 					console.debug('failed creating kind clusters');
-					progressReporter({increment: 100 , message: 'failed to build a local development environment'});
-					reject('OCM extension, failed to build a local development environment');
+					progressReporter({increment: 100 , message: 'failed to build a local environment'});
+					reject('OCM extension, failed to build a local environment');
 				});
 		}
 	});
