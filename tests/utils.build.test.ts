@@ -2,47 +2,73 @@ import { expect, use as chaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import * as buildTools from '../src/utils/build';
+import { buildLocalEnv, Cluster, ClusterType } from '../src/utils/build';
+import * as shellTools from '../src/utils/shell';
 
 chaiUse(chaiAsPromised);
 
 suite('Test cases for the build utility functions', () => {
-	beforeEach(() => sinon.restore()); // unwrap previously wrapped sinon objects
+	var shellExecutionStub: sinon.SinonStub;
 
-	suite('Testing local environment creation ', () => {
-		test('When initializing cluster, the promise should be resolved', async () => {
-			// TODO: impelement unit test
-			expect(true).to.be.true;
-		} );
+	const dummyHubCluster1: Cluster = {
+		name: 'dummyHub1',
+		context: 'kind-dummyHub1',
+		type: ClusterType.hub
+	};
 
-		test('When initializing cluster and cluster name exists, the promise should be rejected', async () => {
-			// TODO: impelement unit test
-			expect(true).to.be.true;
-		} );
+	const dummyHubCluster2: Cluster = {
+		name: 'dummyHub2',
+		context: 'kind-dummyHub2',
+		type: ClusterType.hub
+	};
 
-		test('When initializing hub, the promise should be resolved and return a string', async () => {
-			// TODO: impelement unit test
-			expect(true).to.be.true;
-		} );
+	const dummyManagedCluster1: Cluster = 		{
+		name: 'dummyCluster1',
+		context: 'kind-dummyCluster1',
+		type: ClusterType.managed
+	};
 
-		test('When joining clusters spoke , the promise should be resolved and all clusters should be joined' , async () => {
-			// TODO: impelement unit test
-			expect(true).to.be.true;
-		} );
+	const dummyManagedCluster2: Cluster = 		{
+		name: 'dummyCluster2',
+		context: 'kind-dummyCluster2',
+		type: ClusterType.managed
+	};
 
-		test('When joining clusters and no spoke ,  promise should be approved  and all clusters should be joined' , async () => {
-			// TODO: impelement unit test
-			expect(true).to.be.true;
-		} );
+	const fullClusterList = [dummyHubCluster1, dummyManagedCluster1, dummyManagedCluster2];
 
-		test('When approving clusters and no spoke , the promise should be rejected' , async () => {
-			// TODO: impelement unit test
-			expect(true).to.be.true;
-		} );
+	beforeEach(() => {
+		sinon.restore(); // unwrap previously wrapped sinon objects
+		//shellExecutionStub = sinon.stub(shellTools, 'executeShellCommand'); // stub shell execution utility function
+		sinon.stub(console, 'debug'); // silence debug logs
+	});
 
-		test('When approving clusters and no spoke , the promise should be rejected' , async () => {
-			// TODO: impelement unit test
-			expect(true).to.be.true;
-		} );
+	suite('Testing buildLocalEnv', () => {
+		test('When building with no hubs, the build should be rejected', async () => {
+			let fakeProgressReporter = sinon.fake(); // fake progress reporter
+			// given the requested cluster list contains two managed clusters and no hub cluster
+			let clusters = [dummyManagedCluster1, dummyManagedCluster2];
+			return Promise.all([
+				// then the build should be rejected
+				expect(buildLocalEnv(clusters, fakeProgressReporter))
+					.to.eventually.be.rejectedWith('OCM extension, expect 1 Hub-typed cluster, found 0'),
+				// then the progress reporter should be incremented fully
+				expect(fakeProgressReporter.firstCall.firstArg)
+					.to.contain({increment: 100 , message: 'expect 1 Hub-typed cluster, found 0'})
+			]);
+		});
+
+		test('When building with more the one hub, the build should be rejected', async () => {
+			let fakeProgressReporter = sinon.fake(); // fake progress reporter
+			// given the requested cluster list contains two hub clusters
+			let clusters = [dummyHubCluster1, dummyHubCluster2];
+			return Promise.all([
+				// then the build should be rejected
+				expect(buildLocalEnv(clusters, fakeProgressReporter))
+					.to.eventually.be.rejectedWith('OCM extension, expect 1 Hub-typed cluster, found 2'),
+				// then the progress reporter should be incremented full
+				expect(fakeProgressReporter.firstCall.firstArg)
+					.to.contain({increment: 100 , message: 'expect 1 Hub-typed cluster, found 2'})
+			]);
+		});
 	});
 });

@@ -77,7 +77,7 @@ export async function buildLocalEnv(
 
 		if (hubClusters.length !== 1) {
 			console.debug('only 1 hub is supported/required');
-			progressReporter({increment: 100 , message: 'expect 1 Hub-typed cluster, found ${hubClusters.length}`'});
+			progressReporter({increment: 100 , message: `expect 1 Hub-typed cluster, found ${hubClusters.length}`});
 			reject(`OCM extension, expect 1 Hub-typed cluster, found ${hubClusters.length}`);
 		} else {
 			let hubCluster = hubClusters[0];
