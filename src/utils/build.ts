@@ -66,80 +66,76 @@ async function acceptJoinRequests(hubCluster: Cluster, managedClusters: Cluster[
 		.then(() => shellTools.executeShellCommand(`clusteradm accept --clusters ${managedClustersName} --wait`));
 }
 
+
+// log, report, and fulfil the build process
+function fulfilBuild(msg: string, reporter: (r: ProgressReport) => void, fulfil: (s: string) => void) {
+	console.debug(msg);
+	reporter({increment: 100 , message: msg});
+	fulfil(`OCM extension, ${msg}`);
+}
+
 // starts a local OCM kind env and return a promise
 export async function buildLocalEnv(
 	clusters: Cluster[], progressReporter: (r: ProgressReport) => void): Promise<string> {
 
-	console.debug('starting local environment build');
 	return new Promise((resolve, reject) => {
+		/* ########################## ##
+		## ## Verify Clusters Info ## ##
+		## ########################## */
 		let hubClusters = clusters.filter(c => c.type === ClusterType.hub);
 		let managedClusters = clusters.filter(c => c.type === ClusterType.managed);
 
 		if (hubClusters.length !== 1) {
-			console.debug('only 1 hub is supported/required');
-			progressReporter({increment: 100 , message: `expect 1 Hub-typed cluster, found ${hubClusters.length}`});
-			reject(`OCM extension, expect 1 Hub-typed cluster, found ${hubClusters.length}`);
+			fulfilBuild(`expect 1 Hub-typed cluster, found ${hubClusters.length}`, progressReporter, reject);
 		} else {
+			/* ########################## ##
+			## ## Create Kind Clusters ## ##
+			## ########################## */
 			let hubCluster = hubClusters[0];
-			// create kind clusters
 			progressReporter({increment: 0 , message: `creating ${clusters.length} kind clusters`});
 			let clusterPromises = clusters.map(cluster =>
 				createKindCluster(cluster)
 					.then(stdout => console.log(stdout))
 					.catch(stderr => console.log(stderr))
 			);
-			Promise.all(clusterPromises)
+
+			let kindClustersCreated = Promise.all(clusterPromises);
+			kindClustersCreated
 				.then(() => {
-					console.debug('created kind clusters successfully');
+					/* ################################ ##
+					## ## Initialize the Hub Cluster ## ##
+					## ################################ */
 					progressReporter({increment: 20 , message: `initializing the Hub cluster named ${hubCluster.name}`});
-					// initializing the hub cluster
-					initializeHubCluster(hubCluster)
+					let hubClusterInitialized = initializeHubCluster(hubCluster);
+					hubClusterInitialized
 						.then((joinCmd: string) => {
-							console.debug('initialized hub cluster successfully');
+							/* ################################################### ##
+							## ## Issue Join Requests from The Managed Clusters ## ##
+							## ################################################### */
 							progressReporter({increment: 20 , message: 'issuing join requests for the managed clusters'});
 							// issue join requests from the managed clusters to the hub
 							managedClusters.reduce(
 								(previousPromise, currentPromise) =>
-								 	// TODO: loosing the stdout/stderr here
 									previousPromise.then(() => issueJoinRequest(currentPromise, joinCmd)),
 									Promise.resolve('initial value')
 							)
 							.then(() => {
-								console.debug('issued join requests successfully');
+								/* ################################################ ##
+								## ## Accept Join Requests from the Hub Cluster  ## ##
+								## ################################################ */
 								progressReporter({increment: 20 , message: 'accepting the managed clusters join request from the hub cluster'});
 								// accept the issued join commands by the managed clusters from the hub cluster
 								acceptJoinRequests(hubCluster, managedClusters)
-									.then(() => {
-										console.debug('accepted join requests successfully');
-										progressReporter({increment: 100 , message: 'successfully created your local environment, have fun'});
-										// TODO: display the user with information about the created clusters: names/contexts
-										resolve('OCM extension, successfully created your local environment, have fun');
-									})
-									.catch((stderr) => {
-										console.debug('failed to accept join requests');
-										console.error(stderr);
-										progressReporter({increment: 100 , message: 'failed to accept the join request made from the managed clusters'});
-										reject('OCM extension, failed to accept the join request made from the managed clusters');
-									});
+									.then(() => fulfilBuild('successfully created your local environment, have fun', progressReporter, resolve))
+									.catch(() => fulfilBuild('failed to accept join requests', progressReporter, reject));
 							})
-							.catch(() => {
-								console.debug('failed to issue join requests');
-								progressReporter({increment: 100 , message: 'failed to make join request for the managed clusters'});
-								reject('OCM extension, failed to make join request for the managed clusters');
-							});
-						})
-						.catch((stderr: string) => {
-							console.debug('failed initializing the hub cluster');
-							console.error(stderr);
-							progressReporter({increment: 100 , message: 'failed to initialize the hub cluster'});
-							reject('OCM extension, failed to initialize the hub cluster');
+							.catch(() => fulfilBuild('failed to issue join requests', progressReporter, reject));
 						});
-				})
-				.catch(() => {
-					console.debug('failed creating kind clusters');
-					progressReporter({increment: 100 , message: 'failed to build a local environment'});
-					reject('OCM extension, failed to build a local environment');
+					hubClusterInitialized
+						.catch(() => fulfilBuild('failed initializing the hub cluster', progressReporter, reject));
 				});
+			kindClustersCreated
+				.catch(() => fulfilBuild('failed creating kind clusters', progressReporter, reject));
 		}
 	});
 }
