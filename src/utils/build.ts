@@ -100,8 +100,8 @@ export async function buildLocalEnv(
 							// issue join requests from the managed clusters to the hub
 							managedClusters.reduce(
 								(previousPromise, currentPromise) =>
-									previousPromise.then(() =>
-										issueJoinRequest(currentPromise, joinCmd)), // TODO: loosing the stdout/stderr here
+								 	// TODO: loosing the stdout/stderr here
+									previousPromise.then(() => issueJoinRequest(currentPromise, joinCmd)),
 									Promise.resolve('initial value')
 							)
 							.then(() => {
