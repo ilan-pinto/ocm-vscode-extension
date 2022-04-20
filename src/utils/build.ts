@@ -37,7 +37,7 @@ export const defaultClusters: Cluster[] = [
 ];
 
 // create a kind cluster, fulfilled with stdout/stderr
-async function createKindCluster(cluster: Cluster):  Promise<string> {
+function createKindCluster(cluster: Cluster):  Promise<string> {
 	console.debug(`creating a kind cluster named ${cluster.name}`);
 	return shellTools.executeShellCommand(`kind create cluster --name ${cluster.name}`);
 }
@@ -49,9 +49,12 @@ async function createKindClusters(
 	console.debug(`creating ${clusters.length} kind clusters`);
 	reporter({increment: 0 , message: `creating ${clusters.length} kind clusters`});
 	let clusterPromises = clusters.map(cluster => createKindCluster(cluster));
-	return Promise.all(clusterPromises)
-		.then(() => Promise.resolve())
-		.catch(() => Promise.reject('failed creating kind clusters'));
+	await Promise.allSettled(clusterPromises)
+		.then((results: PromiseSettledResult<string>[]) => {
+			if (results.filter((r) => r.status === 'rejected').length > 0) {
+				return Promise.reject('failed creating kind clusters');
+			}
+		});
 }
 
 // initialize the hub cluster, resolves with the join command, rejects with the error message
@@ -123,8 +126,9 @@ export async function buildLocalEnv(
 		let hubClusters = clusters.filter(c => c.type === ClusterType.hub);
 		let managedClusters = clusters.filter(c => c.type === ClusterType.managed);
 
-		if (hubClusters.length !== 1) {
-			fulfilBuild(`expect 1 Hub-typed cluster, found ${hubClusters.length}`, reporter, reject);
+		if (hubClusters.length !== 1 || managedClusters.length < 1) {
+			let errMsg = `required 1 hub and at least 1 managed cluster, found ${hubClusters.length} and ${managedClusters.length}`;
+			fulfilBuild(errMsg, reporter, reject);
 		} else {
 			let hubCluster = hubClusters[0];
 			createKindClusters(clusters, reporter) // create the kind clusters
