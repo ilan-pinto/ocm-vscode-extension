@@ -86,7 +86,7 @@ async function gatherClustersInfo(): Promise<build.Cluster[]> {
 }
 
 export async function createLocalEnvironment() {
-	// start building the development environment
+	// start building the local environment
 	await vscode.window.withProgress(
 		{
 			location: vscode.ProgressLocation.Notification,
@@ -98,7 +98,7 @@ export async function createLocalEnvironment() {
 			let clusters = await gatherClustersInfo();
 			await environment.verifyTools(...environment.requiredTools)
 				.then(async () => {
-					progress.report({increment: 20, message: 'starting to build your development environment'});
+					progress.report({increment: 20, message: 'starting to build your local environment'});
 					return build.buildLocalEnv(clusters, (r: build.ProgressReport) => progress.report(r))
 						.then((msg: string) => vscode.window.showInformationMessage(msg))
 						.catch((msg: string) => vscode.window.showErrorMessage(msg));

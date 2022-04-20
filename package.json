@@ -45,7 +45,7 @@
 			},
 			{
 				"command": "ocm-vscode-extension.verifyTools",
-				"title": "Verify development tools existence",
+				"title": "Verify required tools existence",
 				"category": "OCM"
 			},
 			{
@@ -54,8 +54,8 @@
 				"category": "OCM"
 			},
 			{
-				"command": "ocm-vscode-extension.",
-				"title": "Build local development environment",
+				"command": "ocm-vscode-extension.createLocalEnvironment",
+				"title": "Build local environment",
 				"category": "OCM"
 			}
 		],
@@ -91,7 +91,7 @@
 		"viewsWelcome": [
 			{
 				"view": "forDevelopers",
-				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.getClusteradmVersion)\n[Verify Development Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
+				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.getClusteradmVersion)\n[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
 			}
 		],
 		"menus": {
