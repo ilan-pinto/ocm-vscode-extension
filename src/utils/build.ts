@@ -46,12 +46,9 @@ async function createKindCluster(cluster: Cluster):  Promise<string> {
 async function createKindClusters(
 	clusters: Cluster[], reporter: (r: ProgressReport) => void): Promise<void|string> {
 
+	console.debug(`creating ${clusters.length} kind clusters`);
 	reporter({increment: 0 , message: `creating ${clusters.length} kind clusters`});
-	let clusterPromises = clusters.map(cluster =>
-		createKindCluster(cluster)
-			.then(stdout => console.log(stdout))
-			.catch(stderr => console.log(stderr))
-	);
+	let clusterPromises = clusters.map(cluster => createKindCluster(cluster));
 	return Promise.all(clusterPromises)
 		.then(() => Promise.resolve())
 		.catch(() => Promise.reject('failed creating kind clusters'));
@@ -81,6 +78,7 @@ async function issueJoinRequest(managedCluster: Cluster, joinCmd: string): Promi
 async function sendJoinRequests(
 		joinCmd: string, managedClusters: Cluster[], reporter: (r: ProgressReport) => void): Promise<void|string> {
 
+	console.debug(`issuing a join requests for ${managedClusters.length} managed clusters`);
 	reporter({increment: 20 , message: 'issuing join requests for the managed clusters'});
 	return managedClusters.reduce(
 		(previousPromise, currentPromise) =>
@@ -93,7 +91,7 @@ async function sendJoinRequests(
 
 // approve join request made to the hub cluster by the managed clusters
 async function acceptJoinRequest(hubCluster: Cluster, requesters: string) : Promise<string> {
-	console.debug(`accepting managed clusters ${requesters} on behalf of the hub ${hubCluster.name}`);
+	console.debug(`accepting join requests from ${requesters}`);
 	return shellTools.executeShellCommand(`kubectl config use ${hubCluster.context}`)
 		.then(() => shellTools.executeShellCommand(`clusteradm accept --clusters ${requesters} --wait`));
 }
@@ -102,6 +100,7 @@ async function acceptJoinRequest(hubCluster: Cluster, requesters: string) : Prom
 async function acceptAllJoinRequests(
 	hubCluster: Cluster, managedClusters: Cluster[], reporter: (r: ProgressReport) => void): Promise<string> {
 
+	console.debug(`accepting ${managedClusters.length} on behalf of the ${hubCluster.name}`);
 	reporter({increment: 20 , message: 'accepting the managed clusters join request from the hub cluster'});
 	return acceptJoinRequest(hubCluster, managedClusters.map(mc => mc.name).join())
 		.then(() => Promise.resolve('successfully created your local environment, have fun'))
@@ -109,7 +108,7 @@ async function acceptAllJoinRequests(
 }
 
 // log, report, and fulfil the build process
-function fulfilBuild(msg: string, reporter: (r: ProgressReport) => void, fulfil: (s: string) => void) {
+function fulfilBuild(msg: string, reporter: (r: ProgressReport) => void, fulfil: (s: string) => void): void {
 	console.debug(msg);
 	reporter({increment: 100 , message: msg});
 	fulfil(`OCM extension, ${msg}`);

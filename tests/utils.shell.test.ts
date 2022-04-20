@@ -38,11 +38,11 @@ suite('Test cases for the shell utility functions', () => {
 
 		test('When executing a failed command, the promise should be rejected', async () => {
 			let dummyCommand = 'dummy-failed-command';
-			let dummyErrout = 'oh my god they killed kenny';
+			let dummyStderr = 'oh my god they killed kenny';
 			// given the dummy failed execution will return for the dummy command
-			sinon.stub(shell, 'exec').withArgs(dummyCommand, sinon.match.func).yields(999, null, dummyErrout);
+			sinon.stub(shell, 'exec').withArgs(dummyCommand, sinon.match.func).yields(999, null, dummyStderr);
 			// then expect the promise to be rejected with the error output from the failed execution
-			return expect(executeShellCommand(dummyCommand)).to.eventually.be.rejectedWith(dummyErrout);
+			return expect(executeShellCommand(dummyCommand)).to.eventually.be.rejectedWith(dummyStderr);
 		});
 	});
 });
