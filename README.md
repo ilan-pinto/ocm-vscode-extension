@@ -14,6 +14,13 @@ The `ocm-vscode-extension` helps quickly create Open Cluster Management (OCM) ap
 
 ![new-project][11]
 
+- Create a local environment using [kind][5], [clusteradm][6], and [kubectl][7]:
+  - Verify the existence of the required tools.
+  - Create as many [kind][5] clusters as you need.
+  - Initialize the _hub cluster_ using [clusteradm][6], and [kubectl][7].
+  - Send join requests from the _managed clusters_ to the _hub cluster_ using [clusteradm][6], and [kubectl][7].
+  - Accept the join requests from the _hub cluster_ using [clusteradm][6], and [kubectl][7].
+
 ## Installation
 
 This extension is still in development and is available as pre-release development snapshots only.</br>
@@ -40,6 +47,9 @@ See our [Contributing Guidelines][3] for more information.
 [2]: https://github.com/open-cluster-management-io/clusteradm
 [3]: https://github.com/ilan-pinto/ocm-vscode-extension/contribute
 [4]: https://github.com/ilan-pinto/ocm-vscode-extension/releases/tag/early-access
+[5]: https://kind.sigs.k8s.io/
+[6]: https://github.com/open-cluster-management-io/clusteradm
+[7]: https://kubernetes.io/docs/tasks/tools/
 <!-- GIFS -->
 [10]: https://raw.githubusercontent.com/ilan-pinto/ocm-vscode-extension/main/images/snippets-from-palette.gif
 [11]: https://raw.githubusercontent.com/ilan-pinto/ocm-vscode-extension/main/images/new-project.gif

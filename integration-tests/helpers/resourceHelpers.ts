@@ -13,7 +13,7 @@ declare global {
 // load the helpers
 export function loadHelpers() {
 	// helper for asserting the kind object of a k8s resource
-	Assertion.addMethod('resourceKind', function(expectedKind: string) {
+	Assertion.addChainableMethod('resourceKind', function(expectedKind: string) {
 		let resourceFile = this._obj;
 		let foundKind = resourceFile['kind'];
 		this.assert(
@@ -26,7 +26,7 @@ export function loadHelpers() {
 	});
 
 	// helper for asserting the type object in the spec object
-	Assertion.addMethod('specType', function(expectedType: string) {
+	Assertion.addChainableMethod('specType', function(expectedType: string) {
 		let resourceFile = this._obj;
 		let foundType = resourceFile['spec']['type'];
 		this.assert(

@@ -1,39 +1,5 @@
 import * as shell from './shell';
 
-export const hub = "hub";
-export const cluster1 = "cluster1";
-export const cluster2 = "cluster2";
-
-export const hubContext = `kind-${hub}`;
-export const cluster1Context = `kind-${cluster1}`;
-export const cluster2Context = `kind-${cluster2}`;
-
-
-export interface Cluster {
-	clusterName: string,
-	clusterContext: string
-	type: string //Hub or Spoke
-}
-
-export let clusters: Array<Cluster> = [
-	{
-		"clusterName": hub,
-		"clusterContext": hubContext,
-		"type": "Hub"
-	}, 
-	{
-		"clusterName": cluster2,
-		"clusterContext": cluster2Context,
-		"type": "Spoke"
-	},
-	{ 
-		"clusterName": cluster1,
-		"clusterContext": cluster1Context,
-		"type": "Spoke"
-	}, 
-];
-
-
 export interface RequiredTool {
 	name: string,
 	installUrl: string
@@ -64,7 +30,7 @@ export async function verifyTools(...tools: RequiredTool[]): Promise<string|stri
 	);
 	return Promise.all(executionPromises)
 		.then(() => Promise.resolve('OCM extension, all tools are accessible, we\'re good to go'))
-		.catch( (err) =>  Promise.reject(err) );
+		.catch((err) =>  Promise.reject(err) );
 }
 
 // parse the locally installed clusteradm client and server version
