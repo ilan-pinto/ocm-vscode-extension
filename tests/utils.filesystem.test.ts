@@ -8,13 +8,11 @@ import * as fse from 'fs-extra';
 
 chaiUse(chaiAsPromised);
 
-function pathMatches(expectedPath: string): sinon.SinonMatch {
-	return sinon.match((arg: string) => {
-		if (process.platform === 'win32') { // windows fix
-			arg = arg.replace('/', '\\');
-		}
-		return arg.endsWith(expectedPath);
-	}, "Path not as expected");
+const normalizePath = (path: string) =>
+	path.replace(/[\\/]+/g, '/').replace(/^([a-zA-Z]+:|\.\/)/, '');
+
+function pathMatches(expected: string): sinon.SinonMatch {
+	return sinon.match((arg: string) => normalizePath(arg).endsWith(expected));
 }
 
 suite('Test cases for the filesystem utility functions', () => {
