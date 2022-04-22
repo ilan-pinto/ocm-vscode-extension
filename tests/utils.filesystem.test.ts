@@ -1,14 +1,14 @@
 // @ts-nocheck
-import { expect, use as chaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { beforeEach } from 'mocha';
-import * as sinon from 'sinon';
-import { createProjectFromTemplate } from '../src/utils/filesystem';
 import * as fse from 'fs-extra';
+import * as sinon from 'sinon';
+import { use as chaiUse, expect } from 'chai';
+import { beforeEach } from 'mocha';
+import { createProjectFromTemplate } from '../src/utils/filesystem';
 
 chaiUse(chaiAsPromised);
 
-const normalizePath = (path: string) =>
+const normalizePath = (path: string): string =>
 	path.replace(/[\\/]+/g, '/').replace(/^([a-zA-Z]+:|\.\/)/, '');
 
 function pathMatches(expected: string): sinon.SinonMatch {

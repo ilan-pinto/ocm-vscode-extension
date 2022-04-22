@@ -1,11 +1,11 @@
-import { expect, use as chaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as fse from 'fs-extra';
-import * as yaml from 'js-yaml';
-import { beforeEach } from 'mocha';
 import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
+import * as yaml from 'js-yaml';
+import { use as chaiUse, expect } from 'chai';
+import { beforeEach } from 'mocha';
 import { loadHelpers as loadResourceHelpers } from '../helpers/resourceHelpers';
 
 chaiUse(chaiAsPromised);

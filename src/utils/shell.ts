@@ -1,5 +1,5 @@
 
-import * as shell from 'shelljs' ;
+import * as shell from 'shelljs';
 
 shell.config.execPath = String(shell.which('node'));
 

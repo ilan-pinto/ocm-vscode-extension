@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
+import * as createEnvironment from './commands/createEnvironment';
 import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
-import * as createEnvironment from './commands/createEnvironment';
+import * as vscode from 'vscode';
 
 const extName = 'ocm-vscode-extension';
 
@@ -29,7 +29,7 @@ const cmdBuildLocalClusterDisposable = vscode.commands.registerCommand(
 );
 
 // EXPORTS
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
 	context.subscriptions.push(
 		cmdNewProjectDisposable, // command: ocm-vscode-extension.ocmNewProject
 		cmdVerifyToolsDisposable, // command: ocm-vscode-extension.verifyTools

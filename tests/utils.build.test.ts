@@ -1,9 +1,9 @@
-import { expect, use as chaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { beforeEach } from 'mocha';
-import * as sinon from 'sinon';
-import { buildLocalEnv, Cluster, ClusterType, ProgressReport } from '../src/utils/build';
 import * as shellTools from '../src/utils/shell';
+import * as sinon from 'sinon';
+import { Cluster, ClusterType, buildLocalEnv } from '../src/utils/build';
+import { use as chaiUse, expect } from 'chai';
+import { beforeEach } from 'mocha';
 
 chaiUse(chaiAsPromised);
 

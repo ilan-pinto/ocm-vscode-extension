@@ -1,9 +1,9 @@
-import { expect, use as chaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { beforeEach } from 'mocha';
-import * as sinon from 'sinon';
-import { parseClusteradmVersion, verifyTools, RequiredTool } from '../src/utils/environment';
 import * as shellUtils from '../src/utils/shell';
+import * as sinon from 'sinon';
+import { RequiredTool, parseClusteradmVersion, verifyTools } from '../src/utils/environment';
+import { use as chaiUse, expect } from 'chai';
+import { beforeEach } from 'mocha';
 
 chaiUse(chaiAsPromised);
 

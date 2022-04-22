@@ -11,7 +11,7 @@ declare global {
 }
 
 // load the helpers
-export function loadHelpers() {
+export function loadHelpers(): void {
 	// helper for asserting the kind object of a k8s resource
 	Assertion.addChainableMethod('resourceKind', function(expectedKind: string) {
 		let resourceFile = this._obj;

@@ -138,6 +138,7 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -w -p ./",
 		"lint": "eslint src integration-tests tests --ext ts",
+		"lint:fix": "eslint src integration-tests tests --ext ts --fix",
 		"clean": "rm -rf out",
 		"clean-ext": "rm -rf .vscode-test",
 		"clean-test-ws": "find ./test-workspace/ -mindepth 1  ! -name '.gitkeep' -delete",

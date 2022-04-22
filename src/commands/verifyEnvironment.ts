@@ -2,7 +2,7 @@ import * as environment from '../utils/environment';
 import * as vscode from 'vscode';
 
 // verify the required tools exists
-export function verifyTools() {
+export async function verifyTools(): Promise<void> {
 	environment.verifyTools(...environment.requiredTools)
 		// @ts-ignore
 		.then((msg: string) => vscode.window.showInformationMessage(msg))
@@ -15,7 +15,7 @@ export function verifyTools() {
 }
 
 // get clusteradm version
-export function getClusteradmVersion() {
+export async function getClusteradmVersion(): Promise<void> {
 	environment.parseClusteradmVersion()
 		// @ts-ignore
 		.then((msgs: string[]) => msgs.forEach(msg => vscode.window.showInformationMessage(msg)))

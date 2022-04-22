@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
 import * as build from '../utils/build';
 import * as environment from '../utils/environment';
 import * as lodash from 'lodash';
+import * as vscode from 'vscode';
 
 enum YesNo {
 	yes = 'Yes',
@@ -72,7 +72,7 @@ async function gatherClustersInfo(): Promise<build.Cluster[]> {
 	});
 }
 
-export async function createLocalEnvironment() {
+export async function createLocalEnvironment(): Promise<void> {
 	// offer the user to use the default 3 cluster configuration,
 	// 1 hub cluster named hub and 2 managed cluster named cluster1/2
 	let useDefaults: string = await vscode.window.showQuickPick(

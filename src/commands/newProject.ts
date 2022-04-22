@@ -1,9 +1,9 @@
 
-import * as vscode from 'vscode';
 import * as filesystem from '../utils/filesystem';
+import * as vscode from 'vscode';
 
 // create a template project based on the user input
-export async function create() {
+export async function create(): Promise<void> {
 	// get template type from the user
 	let templateType: string = await vscode.window.showQuickPick(
 		filesystem.availableTemplates, {

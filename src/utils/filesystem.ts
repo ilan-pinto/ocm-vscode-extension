@@ -24,11 +24,11 @@ export async function createProjectFromTemplate(
 						// copy templates to project folder
 						.then(() => fse.copy(templatesFolder, projectFolder)
 							.then(() => resolve(`OCM extension, project ${projectName} created`))
-							.catch((reason: any) => reject(
+							.catch((reason: string) => reject(
 								`OCM extension, failed creating project ${projectName}, ${reason}`)
 							)
 						)
-						.catch((reason: any) => reject(
+						.catch((reason: string) => reject(
 							`OCM extension, failed to create project folder ${projectName}, ${reason}`
 						));
 				}

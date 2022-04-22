@@ -1,9 +1,9 @@
-import { expect, use as chaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { beforeEach } from 'mocha';
 import * as shell from 'shelljs';
 import * as sinon from 'sinon';
+import { use as chaiUse, expect } from 'chai';
 import { checkToolExists, executeShellCommand } from '../src/utils/shell';
+import { beforeEach } from 'mocha';
 
 chaiUse(chaiAsPromised);
 
