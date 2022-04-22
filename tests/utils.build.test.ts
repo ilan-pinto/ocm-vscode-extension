@@ -1,11 +1,13 @@
 import * as chaiAsPromised from 'chai-as-promised';
 import * as shellTools from '../src/utils/shell';
 import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { Cluster, ClusterType, buildLocalEnv } from '../src/utils/build';
 import { use as chaiUse, expect } from 'chai';
 import { beforeEach } from 'mocha';
 
 chaiUse(chaiAsPromised);
+chaiUse(sinonChai);
 
 suite('Test cases for the build utility functions', () => {
 	var shellExecutionStub: sinon.SinonStub;
@@ -57,29 +59,31 @@ suite('Test cases for the build utility functions', () => {
 	});
 
 	suite('Testing buildLocalEnv', () => {
-		test('When building with no hubs, the build should be rejected', async () => {
+		test('When building with no hub cluster, the build should be rejected', async () => {
 			// given the requested cluster list contains two managed clusters and no hub cluster
 			let clusters = [dummyManagedCluster1, dummyManagedCluster2];
 			return Promise.all([
 				// then the build should be rejected
 				expect(buildLocalEnv(clusters, fakeProgressReporter))
-					.to.eventually.be.rejectedWith('OCM extension, required 1 hub and at least 1 managed cluster, found 0 and 2'),
+					.to.eventually.be.rejectedWith(
+						'OCM extension, required 1 hub and at least 1 managed cluster, found 0 and 2'),
 				// then the progress reporter should be incremented fully
-				expect(fakeProgressReporter.firstCall.firstArg)
-					.to.contain({increment: 100 , message: 'required 1 hub and at least 1 managed cluster, found 0 and 2'})
+				expect(fakeProgressReporter).to.have.been.calledOnceWith(
+					{increment: 100 , message: 'required 1 hub and at least 1 managed cluster, found 0 and 2'})
 			]);
 		});
 
-		test('When building with more the one hub, the build should be rejected', async () => {
+		test('When building with multiple hub clusters, the build should be rejected', async () => {
 			// given the requested cluster list contains two hub clusters
 			let clusters = [dummyHubCluster1, dummyHubCluster2, dummyManagedCluster1];
 			return Promise.all([
 				// then the build should be rejected
 				expect(buildLocalEnv(clusters, fakeProgressReporter))
-					.to.eventually.be.rejectedWith('OCM extension, required 1 hub and at least 1 managed cluster, found 2 and 1'),
+					.to.eventually.be.rejectedWith(
+						'OCM extension, required 1 hub and at least 1 managed cluster, found 2 and 1'),
 				// then the progress reporter should be incremented full
-				expect(fakeProgressReporter.firstCall.firstArg)
-					.to.contain({increment: 100 , message: 'required 1 hub and at least 1 managed cluster, found 2 and 1'})
+				expect(fakeProgressReporter).to.have.been.calledOnceWith(
+					{increment: 100 , message: 'required 1 hub and at least 1 managed cluster, found 2 and 1'})
 			]);
 		});
 
@@ -89,14 +93,15 @@ suite('Test cases for the build utility functions', () => {
 			return Promise.all([
 				// then the build should be rejected
 				expect(buildLocalEnv(clusters, fakeProgressReporter))
-					.to.eventually.be.rejectedWith('OCM extension, required 1 hub and at least 1 managed cluster, found 1 and 0'),
+					.to.eventually.be.rejectedWith(
+						'OCM extension, required 1 hub and at least 1 managed cluster, found 1 and 0'),
 				// then the progress reporter should be incremented full
-				expect(fakeProgressReporter.firstCall.firstArg)
-					.to.contain({increment: 100 , message: 'required 1 hub and at least 1 managed cluster, found 1 and 0'})
+				expect(fakeProgressReporter).to.have.been.calledOnceWith(
+					{increment: 100 , message: 'required 1 hub and at least 1 managed cluster, found 1 and 0'})
 			]);
 		});
 
-		test('When failed to create kind clusters, the build should be rejected', async () => {
+		test('When failed creating kind clusters, the build should be rejected', async () => {
 			// given kind will fail creating the clusters
 			shellExecutionStub
 				.withArgs(sinon.match((s: string) => s.startsWith('kind create cluster --name')))
@@ -115,7 +120,7 @@ suite('Test cases for the build utility functions', () => {
 			]);
 		});
 
-		test('When failed to initialize the hub cluster, the build should be rejected', async () => {
+		test('When failed initializing the hub cluster, the build should be rejected', async () => {
 			// given kind will successfully create the clusters
 			shellExecutionStub
 				.withArgs(sinon.match((s: string) => s.startsWith('kind create cluster --name')))
@@ -183,7 +188,7 @@ suite('Test cases for the build utility functions', () => {
 			]);
 		});
 
-		test('When accepting join requests fails, the build should be rejected', async () => {
+		test('When accepting the join requests fails, the build should be rejected', async () => {
 			// given kind will successfully create the clusters
 			shellExecutionStub
 				.withArgs(sinon.match((s: string) => s.startsWith('kind create cluster --name')))

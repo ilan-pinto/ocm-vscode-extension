@@ -1,15 +1,17 @@
 import * as chaiAsPromised from 'chai-as-promised';
+import * as chaiThings from 'chai-things';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 import * as yaml from 'js-yaml';
 import { use as chaiUse, expect } from 'chai';
 import { beforeEach } from 'mocha';
-import { loadHelpers as loadResourceHelpers } from '../helpers/resourceHelpers';
 
 chaiUse(chaiAsPromised);
-loadResourceHelpers();
+chaiUse(sinonChai);
+chaiUse(chaiThings);
 
 interface ExpectedTemplate {
 	channelType: string,
@@ -73,20 +75,16 @@ suite('New-project command Suite', () => {
 			// when invoking the command
 			await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 			await sleep(projectCreationDelayMS); // wait a sec
-			// grab the resource files
+			// then grab the resource files
 			let channel = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
 			let subscription = yaml.load(await fse.readFile(`${projectFolder}/subscription.yaml`, 'utf-8'));
 			return Promise.all([
-				// then a folder with the project name should be created
+				// then expect the following
 				expect(fse.pathExists(projectFolder)).to.eventually.be.true,
-				// then the created folder should contain the expected files
 				expect(fse.readdir(projectFolder)).to.eventually.have.members(expectedTemplateFiles),
-				// then a proper info message should be displayed to the user
-				expect(infoBoxSpy.firstCall.firstArg).to.equal(`OCM extension, project ${projectNameInput} created`),
-				// then the channel resource kind should be channel
-				expect(channel).to.have.resourceKind('Channel'),
-				// the the channel resource spec type should be as expected
-				expect(channel).to.have.specType(sut.channelType),
+				expect(infoBoxSpy).to.have.been.calledOnceWith(`OCM extension, project ${projectNameInput} created`),
+				expect(channel).to.have.property('kind').that.equals('Channel'),
+				expect(channel).to.have.property('spec').that.has.a.property('type').that.equals(sut.channelType),
 				// then verify using the dynamic verification method
 				sut.verifySubscription(subscription)
 			]);
@@ -105,19 +103,15 @@ suite('New-project command Suite', () => {
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		await sleep(projectCreationDelayMS); // wait a sec
-		// grab the resource files
+		// the grab the channel resource file
 		let channel = yaml.load(await fse.readFile(`${projectFolder}/channel.yaml`, 'utf-8'));
 		return Promise.all([
-			// then a folder with the project name should be created
+			// then expect the following
 			expect(fse.pathExists(projectFolder)).to.eventually.be.true,
-			// then the created folder should contain the expected files
 			expect(fse.readdir(projectFolder)).to.eventually.have.members(expectedTemplateFiles),
-			// then a proper info message should be displayed to the user
-			expect(infoBoxSpy.firstCall.firstArg).to.equal('OCM extension, project ocm-application created'),
-			// then the channel resource kind should be channel
-			expect(channel).to.have.resourceKind('Channel'),
-			// the the channel resource spec type should be Git
-			expect(channel).to.have.specType('Git'),
+			expect(infoBoxSpy).to.have.been.calledOnceWith('OCM extension, project ocm-application created'),
+			expect(channel).to.have.property('kind').that.equals('Channel'),
+			expect(channel).to.have.property('spec').that.has.a.property('type').that.equals('Git')
 		]);
 	});
 
@@ -135,12 +129,10 @@ suite('New-project command Suite', () => {
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		await sleep(projectCreationDelayMS); // wait a sec
 		return Promise.all([
-			// then the folder should still exist
+			// then expect the following
 			expect(fse.pathExists(projectFolder)).to.eventually.be.true,
-			// then the folder should still be empty (no templates copied)
 			expect(fse.readdir(projectFolder)).to.eventually.be.empty,
-			// then a proper info message should be displayed to the user
-			expect(errorBoxSpy.firstCall.firstArg).to.be.equal(
+			expect(errorBoxSpy).to.have.been.calledWith(
 				`OCM extension, project folder ${projectNameInput} exists, please use another`
 			)
 		]);
@@ -161,10 +153,9 @@ suite('New-project command Suite', () => {
 		// when invoking the command
 		await vscode.commands.executeCommand('ocm-vscode-extension.ocmNewProject');
 		return Promise.all([
-			// then the folder should not be created
+			// then expect the following
 			expect(fse.pathExists(projectFolder)).to.eventually.be.false,
-			// then a proper info message should be displayed to the user
-			expect(warningBoxSpy.firstCall.firstArg).to.equal(
+			expect(warningBoxSpy).to.have.been.calledWith(
 				'OCM extension, no workspace folder, please open a project or create a workspace')
 		]);
 	});
@@ -173,53 +164,40 @@ suite('New-project command Suite', () => {
 /* ############################### ##
 ## Template Verification Functions ##
 ## ############################# ##*/
-function verifyGitSubscription(subscriptionYaml: any): void {
-	// verify kind
-	expect(subscriptionYaml).to.have.resourceKind('Subscription');
-	// verify metadata keys
-	expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
-	// verify metadata annotations
-	let expectedAnnotationKeys = [
-		'apps.open-cluster-management.io/git-branch',
-		'apps.open-cluster-management.io/git-path',
-		'apps.open-cluster-management.io/git-tag',
-		'apps.open-cluster-management.io/git-desired-commit',
-		'apps.open-cluster-management.io/git-clone-depth',
-		'apps.open-cluster-management.io/reconcile-option',
-		'apps.open-cluster-management.io/reconcile-rate'
-	];
-	let existingAnnotations = subscriptionYaml['metadata']['annotations'];
-	expect(existingAnnotations).to.have.keys(expectedAnnotationKeys);
+function verifyGitSubscription(subscription: any): void {
+	expect(subscription).to.have.property('kind').that.equals('Subscription');
+	expect(subscription).to.have.property('metadata').that.contain.keys(['name', 'namespace']);
+	expect(subscription).to.have.property('metadata').that.has.a.property('annotations')
+		.that.has.keys([
+			'apps.open-cluster-management.io/git-branch',
+			'apps.open-cluster-management.io/git-path',
+			'apps.open-cluster-management.io/git-tag',
+			'apps.open-cluster-management.io/git-desired-commit',
+			'apps.open-cluster-management.io/git-clone-depth',
+			'apps.open-cluster-management.io/reconcile-option',
+			'apps.open-cluster-management.io/reconcile-rate'
+		]);
 }
 
-function verifyHelmRepoSubscription(subscriptionYaml: any): void {
-	// verify kind
-	expect(subscriptionYaml).to.have.resourceKind('Subscription');
-	// verify metadata keys
-	expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
-	// verify metadata annotations
-	let expectedAnnotationKeys = [
-		'apps.open-cluster-management.io/reconcile-option',
-		'apps.open-cluster-management.io/reconcile-rate'
-	];
-	let existingAnnotations = subscriptionYaml['metadata']['annotations'];
-	expect(existingAnnotations).to.have.keys(expectedAnnotationKeys);
-	// verify spec packageOverrides
-	let packageOverrides = subscriptionYaml['spec']['packageOverrides'][0];
-	expect(packageOverrides).to.contain.keys(['packageName', 'packageAlias']);
+function verifyHelmRepoSubscription(subscription: any): void {
+	expect(subscription).to.have.property('kind').that.equals('Subscription');
+	expect(subscription).to.have.property('metadata').that.contain.keys(['name', 'namespace']);
+	expect(subscription).to.have.property('metadata').that.has.a.property('annotations')
+		.that.has.keys([
+			'apps.open-cluster-management.io/reconcile-option',
+			'apps.open-cluster-management.io/reconcile-rate'
+		]);
+	expect(subscription).to.have.property('spec').that.has.a.property('packageOverrides')
+		.that.include.something.that.contains.keys(['packageName', 'packageAlias']);
 }
 
-function verifyObjectBucketSubscription(subscriptionYaml: any): void {
-	// verify kind
-	expect(subscriptionYaml).to.have.resourceKind('Subscription');
-	// verify metadata keys
-	expect(subscriptionYaml['metadata']).to.contain.keys(['name', 'namespace']);
-	// verify metadata annotations
-	let expectedAnnotationKeys = [
-		'apps.open-cluster-management.io/bucket-path',
-		'apps.open-cluster-management.io/reconcile-option',
-		'apps.open-cluster-management.io/reconcile-rate'
-	];
-	let existingAnnotations = subscriptionYaml['metadata']['annotations'];
-	expect(existingAnnotations).to.have.keys(expectedAnnotationKeys);
+function verifyObjectBucketSubscription(subscription: any): void {
+	expect(subscription).to.have.property('kind').that.equals('Subscription');
+	expect(subscription).to.have.property('metadata').that.contain.keys(['name', 'namespace']);
+	expect(subscription).to.have.property('metadata').that.has.a.property('annotations')
+		.that.has.keys([
+			'apps.open-cluster-management.io/bucket-path',
+			'apps.open-cluster-management.io/reconcile-option',
+			'apps.open-cluster-management.io/reconcile-rate'
+		]);
 }

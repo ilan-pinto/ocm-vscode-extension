@@ -22,7 +22,7 @@ suite('Test cases for the environment utility functions', () => {
 			'installUrl': 'https://we.dont/have/install/instructions/#forthat'
 		};
 
-		test('When verifying with one existing tool, the promise should resolved', async () => {
+		test('When verifying with one existing tool, the tool should be successful', async () => {
 			// given the shell utility will resolve the request, indicating the tool was found
 			sinon.stub(shellUtils, 'checkToolExists').withArgs(dummyTool1.name).resolves();
 			// then expect the promise to be resolved with the appropriate message
@@ -31,7 +31,7 @@ suite('Test cases for the environment utility functions', () => {
 			);
 		});
 
-		test('When verifying with one non-existing tool, the promise should be rejected', async () => {
+		test('When verifying with one non-existing tool, the tool should fail', async () => {
 			// given the shell utility will reject the request, indicating the for tool was NOT found
 			sinon.stub(shellUtils, 'checkToolExists').withArgs(dummyTool2.name).rejects();
 			// @ts-ignore then expect the promise to be rejected with the missing tool info
@@ -41,7 +41,7 @@ suite('Test cases for the environment utility functions', () => {
 			]);
 		});
 
-		test('When verifying with two existing tools, the promise should be resolved', async () => {
+		test('When verifying with two existing tools, the tool should be successful', async () => {
 			// given the shell utility will resolve for both requests, indicating the both tools were found
 			let checkToolExistsStub = sinon.stub(shellUtils, 'checkToolExists');
 			checkToolExistsStub.withArgs(dummyTool1.name).resolves();
@@ -52,7 +52,7 @@ suite('Test cases for the environment utility functions', () => {
 			);
 		});
 
-		test('When verifying with two tools, but only one exists, the promise should be rejected', async () => {
+		test('When verifying with two tools, but only one exists, the tool should fail', async () => {
 			// given the shell utility will reject one request and resolve the other, indicating only one tool was found
 			let checkToolExistsStub = sinon.stub(shellUtils, 'checkToolExists');
 			checkToolExistsStub.withArgs(dummyTool1.name).rejects();
@@ -70,7 +70,7 @@ suite('Test cases for the environment utility functions', () => {
 		const outputConnectedServer = `client version	:v0.2.0
 		server version	:v1.2.3`;
 
-		test('When clusteradm is installed and connected to a server, the promise should be resolved', async () => {
+		test('When clusteradm is installed and connected to a server, the tool should be successful', async () => {
 			// given the clusteradm tool exists
 			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').resolves();
 			// given the version command will resolved to a correct output
@@ -83,7 +83,7 @@ suite('Test cases for the environment utility functions', () => {
 				]);
 		});
 
-		test('When failed to get clusteradm version, the promise should be rejected', async () => {
+		test('When failed to get clusteradm version, the tool should fail', async () => {
 			// given the clusteradm tool exists
 			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').resolves();
 			// given the version command will rejected with a custom error
@@ -94,7 +94,7 @@ suite('Test cases for the environment utility functions', () => {
 				`OCM extension, unable to detect clusteradm version: ${rejectMessage}`);
 		});
 
-		test('When clusteradm is not installed, the promise should be rejected', async () => {
+		test('When clusteradm is not installed, the tool should fail', async () => {
 			// given the clusteradm tool does NOT exists
 			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').rejects();
 			// then expect the promise to be rejected, the and the message consumers to be called accordingly

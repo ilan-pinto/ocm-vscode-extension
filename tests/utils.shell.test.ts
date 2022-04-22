@@ -11,14 +11,14 @@ suite('Test cases for the shell utility functions', () => {
 	beforeEach(() => sinon.restore()); // unwrap any previously wrapped sinon objects
 
 	suite('Testing checkToolExists', () => {
-		test('When checking with an existing tool, the promise should be resolved', async () => {
+		test('When checking with an existing tool, the function should be successful', async () => {
 			// given the command in question exists
 			sinon.stub(shell, 'exec').withArgs('command -v existing-tool', sinon.match.func).yields(0);
 			// then expect the promise to be resolved
 			return expect(checkToolExists('existing-tool')).to.eventually.be.fulfilled;
 		});
 
-		test('When checking with a non-existing tool, the promise should be rejected', async () => {
+		test('When checking with a non-existing tool, the function should fail', async () => {
 			// given the command in question doesn't exist
 			sinon.stub(shell, 'exec').withArgs('command -v non-existing-tool', sinon.match.func).yields(999);
 			// then expect the promise to be rejected
@@ -27,7 +27,7 @@ suite('Test cases for the shell utility functions', () => {
 	});
 
 	suite('Testing executeShellCommand', () => {
-		test('When executing a successful command, the promise should be resolved', async () => {
+		test('When executing a successful command, the function should be successful', async () => {
 			let dummyCommand = 'dummy-successful-command';
 			let dummyStdout = 'all is good in the hood';
 			// given the dummy success execution will return for the dummy command
@@ -36,7 +36,7 @@ suite('Test cases for the shell utility functions', () => {
 			return expect(executeShellCommand(dummyCommand)).to.eventually.be.equal(dummyStdout);
 		});
 
-		test('When executing a failed command, the promise should be rejected', async () => {
+		test('When executing a failed command, the function should fail', async () => {
 			let dummyCommand = 'dummy-failed-command';
 			let dummyStderr = 'oh my god they killed kenny';
 			// given the dummy failed execution will return for the dummy command

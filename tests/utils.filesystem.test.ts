@@ -23,7 +23,7 @@ suite('Test cases for the filesystem utility functions', () => {
 
 		beforeEach(() => sinon.restore());
 
-		test('When checking with an existing project folder, the promise should be rejected', async () => {
+		test('When the requested project folder already exists, the function should fail', async () => {
 			// given the project path already exists
 			sinon.stub(fse, 'pathExists').withArgs(pathMatches(dummyProjectPath)).resolves(true);
 			// then the promise should be rejected
@@ -33,7 +33,7 @@ suite('Test cases for the filesystem utility functions', () => {
 				);
 		});
 
-		test('When failed to create the project folder, the promise should be rejected', async () => {
+		test('When failed to create the project folder, the function should fail', async () => {
 			// given the project path doesn't already exists
 			sinon.stub(fse, 'pathExists').withArgs(pathMatches(dummyProjectPath)).resolves(false);
 			// given the path creation will be rejected with an error
@@ -45,7 +45,7 @@ suite('Test cases for the filesystem utility functions', () => {
 				);
 		});
 
-		test('When failed to copy the template files to the project folder, the promise should be rejected', async () => {
+		test('When failed to copy the template files to the project folder, the function should fail', async () => {
 			// given the project path doesn't already exists
 			sinon.stub(fse, 'pathExists').withArgs(pathMatches(dummyProjectPath)).resolves(false);
 			// given the path creation will be resolved
@@ -59,7 +59,7 @@ suite('Test cases for the filesystem utility functions', () => {
 				);
 		});
 
-		test('When the template files are copied to the project folder successfully, the promise should be resolved', async () => {
+		test('When the template files are copied to the project folder successfully, the function should be successful', async () => {
 			// given the project path doesn't already exists
 			sinon.stub(fse, 'pathExists').withArgs(pathMatches(dummyProjectPath)).resolves(false);
 			// given the path creation will be resolved
