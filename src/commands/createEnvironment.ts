@@ -111,8 +111,7 @@ export async function createLocalEnvironment(): Promise<void> {
 						.catch((err: string | Error) =>
 							vscode.window.showErrorMessage(err instanceof Error ? err.name : err));
 				})
-				.catch((stderrs: string[]) => {
-					stderrs.forEach((err) => console.error(err));
+				.catch(() => {
 					progress.report({increment: 100, message: 'unable to verify the existence of the required tools' });
 					vscode.window.showErrorMessage(
 						'OCM extension, unable to verify the existence of the required tools'

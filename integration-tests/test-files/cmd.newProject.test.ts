@@ -23,7 +23,7 @@ async function sleep(ms: number): Promise<void> {
 }
 
 // Test cases for the the ocm-vscode-extension.ocmNewProject command
-suite('New-project command Suite', () => {
+suite('Create a new project command', () => {
 	var quickPickStub: sinon.SinonStub;
 	var projectCreationDelayMS = 500;
 

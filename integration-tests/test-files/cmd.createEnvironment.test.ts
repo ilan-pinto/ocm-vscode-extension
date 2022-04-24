@@ -9,8 +9,8 @@ import { beforeEach } from 'mocha';
 
 chaiUse(sinonChai);
 
-// Test cases for the the ocm-vscode-extension.ocmNewProject command
-suite('Create local environment command Suite', () => {
+// Test cases for the the ocm-vscode-extension.createLocalEnvironment command
+suite('Create local environment command', () => {
 	const fakeBuildSuccessMsg = 'this is a fake message';
 
 	var quickPickStub: sinon.SinonStub;
@@ -27,7 +27,7 @@ suite('Create local environment command Suite', () => {
 		infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage'); // wrap a spy around the information box
 	});
 
-	suite('Verify with the default configuration', () => {
+	suite('Using the default configuration', () => {
 		var errorBoxSpy: sinon.SinonSpy;
 
 		beforeEach(() => {
@@ -38,7 +38,7 @@ suite('Create local environment command Suite', () => {
 
 		test('Selecting to build with the default configuration, the command should be successful', async () => {
 			// given all the required tools are installed
-			sinon.stub(environmentTools, 'verifyTools').resolves();
+			sinon.stub(environmentTools, 'verifyTools').withArgs(...environmentTools.requiredTools).resolves();
 			// given the build tool utility function will be resolved with a fake message
 			let buildLocalEnvSpy = sinon.stub(buildTools, 'buildLocalEnv').resolves(fakeBuildSuccessMsg);
 			// when invoking the command
@@ -53,9 +53,8 @@ suite('Create local environment command Suite', () => {
 		});
 
 		test('When the required tools for building the environment are missing, the command should fail', async () => {
-			sinon.stub(console, 'error'); // TODO: silence the stderr prints (not working)
 			// given kind and clusteradm are missing
-			sinon.stub(environmentTools, 'verifyTools').rejects(['kind not found', 'clusteradm not found']);
+			sinon.stub(environmentTools, 'verifyTools').withArgs(...environmentTools.requiredTools).rejects();
 			// when invoking the command
 			await vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
 			// the expect a failure message
@@ -64,7 +63,7 @@ suite('Create local environment command Suite', () => {
 
 		test('When the required tools are present but the build fails, the command should fail', async () => {
 			// given all the required tools are installed
-			sinon.stub(environmentTools, 'verifyTools').resolves();
+			sinon.stub(environmentTools, 'verifyTools').withArgs(...environmentTools.requiredTools).resolves();
 			// given the build tool utility function will be rejected with a fake message
 			sinon.stub(buildTools, 'buildLocalEnv').rejects('oops try again');
 			// when invoking the command
@@ -74,7 +73,7 @@ suite('Create local environment command Suite', () => {
 		});
 	});
 
-	suite('Verify with custom configuration', () => {
+	suite('Using a custom configuration', () => {
 		const fakeHubName = 'my-fake-hub';
 		const numManagedClusters = 3;
 		const fakeManage1Name = `my-managed-cluster-1`;
@@ -94,7 +93,7 @@ suite('Create local environment command Suite', () => {
 			// given the the user will choose NOT to use the default configuration
 			quickPickStub.withArgs([YesNo.yes, YesNo.no], matchDefaultConfigQuickPick).resolves(YesNo.no);
 			// given all the required tools are installed
-			sinon.stub(environmentTools, 'verifyTools').resolves();
+			sinon.stub(environmentTools, 'verifyTools').withArgs(...environmentTools.requiredTools).resolves();
 			// given the build tool utility function will be resolved with a fake message
 			buildLocalEnvSpy = sinon.stub(buildTools, 'buildLocalEnv').resolves(fakeBuildSuccessMsg);
 		});

@@ -7,11 +7,11 @@ export interface RequiredTool {
 
 export const requiredTools: RequiredTool[] = [
 	{
-		'name': 'kubectl',
+		'name': 'kubectl1',
 		'installUrl': 'https://kubernetes.io/docs/tasks/tools/#kubectl'
 	},
 	{
-		'name': 'clusteradm',
+		'name': 'clusteradm1',
 		'installUrl': 'https://github.com/open-cluster-management-io/clusteradm#install-the-clusteradm-command-line'
 	},
 	{
@@ -29,8 +29,7 @@ export async function verifyTools(...tools: RequiredTool[]): Promise<string|stri
 		)
 	);
 	return Promise.all(executionPromises)
-		.then(() => Promise.resolve('OCM extension, all tools are accessible, we\'re good to go'))
-		.catch((err) =>  Promise.reject(err) );
+		.then(() => Promise.resolve('OCM extension, all tools are accessible, we\'re good to go'));
 }
 
 // parse the locally installed clusteradm client and server version
