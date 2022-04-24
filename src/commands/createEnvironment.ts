@@ -3,7 +3,7 @@ import * as environment from '../utils/environment';
 import * as lodash from 'lodash';
 import * as vscode from 'vscode';
 
-enum YesNo {
+export enum YesNo {
 	yes = 'Yes',
 	no = 'No'
 }
@@ -68,7 +68,7 @@ async function gatherClustersInfo(): Promise<build.Cluster[]> {
 			}
 		}
 		// remove clusters with same name on the way out
-		resolve(lodash.uniqBy(clusters, (c) => c.name));
+		resolve(lodash.uniqBy(clusters, c => c.name));
 	});
 }
 
@@ -77,7 +77,7 @@ export async function createLocalEnvironment(): Promise<void> {
 	// 1 hub cluster named hub and 2 managed cluster named cluster1/2
 	let useDefaults: string = await vscode.window.showQuickPick(
 		[YesNo.yes, YesNo.no], {
-			title: `hub cluster named hub and 2 managed cluster named cluster1 and cluster2?"`,
+			title: `use default configuration, 1 hub and 2 managed clusters?`,
 			placeHolder: YesNo.yes
 		}) || YesNo.yes;
 
@@ -102,18 +102,19 @@ export async function createLocalEnvironment(): Promise<void> {
 		async (progress) => {
 			progress.report({increment: 0, message: 'verifying the required tools existence' });
 			// verify the required tool exists
-			await environment.verifyTools(...environment.requiredTools)
+			environment.verifyTools(...environment.requiredTools)
 				.then(async () => {
 					progress.report({increment: 20, message: 'starting to build your local environment'});
 					// build the environment
-					return build.buildLocalEnv(clusters, (r: build.ProgressReport) => progress.report(r))
+					build.buildLocalEnv(clusters, (r: build.ProgressReport) => progress.report(r))
 						.then((msg: string) => vscode.window.showInformationMessage(msg))
-						.catch((msg: string) => vscode.window.showErrorMessage(msg));
+						.catch((err: string | Error) =>
+							vscode.window.showErrorMessage(err instanceof Error ? err.name : err));
 				})
 				.catch((stderrs: string[]) => {
 					stderrs.forEach((err) => console.error(err));
 					progress.report({increment: 100, message: 'unable to verify the existence of the required tools' });
-					return vscode.window.showErrorMessage(
+					vscode.window.showErrorMessage(
 						'OCM extension, unable to verify the existence of the required tools'
 					);
 				});
