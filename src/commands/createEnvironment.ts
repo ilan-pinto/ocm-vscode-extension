@@ -15,7 +15,7 @@ async function gatherClustersInfo(): Promise<build.Cluster[]> {
 
 		// get the hub cluster name from the user
 		let hubClusterName: string = await vscode.window.showInputBox({
-			title: "hub cluster name?",
+			title: 'hub cluster name?',
 			placeHolder: 'hub'
 		}) || 'hub';
 		// add a hub cluster to the clusters array
