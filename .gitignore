@@ -1,4 +1,6 @@
+.nyc_output
 .vscode-test
+coverage
 node_modules
 out
 # note the order of the next test-workspace records

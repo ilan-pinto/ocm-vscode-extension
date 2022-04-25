@@ -1,12 +1,16 @@
 .git/**
 .github/**
+.nyc_output/**
 .vscode/**
 .vscode-test/**
+coverage/**
 images/**
 integration-tests/**
 out/integration-tests/**
 src/**
 test-workspace/**
+tests/**
+out/tests/**
 .editorconfig
 .eslintrc.json
 .gitignore
@@ -15,3 +19,4 @@ tsconfig.json
 **/*.ts
 **/*.vsix
 !images/icon.png
+!images/icon-black.svg

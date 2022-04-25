@@ -42,6 +42,9 @@ jobs:
           path: .vscode-test
           key: ${{ runner.os }}-vscode-test-${{ hashFiles('package.json') }}
 
+      - name: Run unit tests
+        run: npm test
+
       - name: Run integration tests linux
         if: runner.os == 'Linux'
         run: xvfb-run -a npm run integration-tests
@@ -51,5 +54,7 @@ jobs:
         run: npm run integration-tests
 
       - name: Create a VSIX package for target ${{ matrix.target }}
-        run: |
-          npm run vsce:package -- --target ${{ matrix.target }}
+        run: >
+          npm run vsce:package --
+          --target ${{ matrix.target }}
+          --out ocm-vscode-extension-${{ matrix.target }}-dev.vsix

@@ -1,8 +1,8 @@
-import * as path from 'path';
 import * as fse from 'fs-extra';
+import * as path from 'path';
 import { runTests } from '@vscode/test-electron';
 
-async function main() {
+async function main(): Promise<void> {
 	try {
 		// the folder containing the extension manifest package.json, passed to `--extensionDevelopmentPath`
 		const extensionDevelopmentPath: string = path.resolve(__dirname, '../../');

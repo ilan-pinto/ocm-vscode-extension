@@ -35,9 +35,14 @@ jobs:
       - name: Install project modules
         run: npm i
 
+      - name: Run unit tests
+        run: npm test
+
       - name: Create VSIX package
-        run: |
-          npm run vsce:package -- --target ${{ matrix.target }}
+        run: >
+          npm run vsce:package --
+          --target ${{ matrix.target }}
+          --out ocm-vscode-extension-${{ matrix.target }}-early-access.vsix
 
       - name: Upload VSIX package as artifact
         uses: actions/upload-artifact@v3
