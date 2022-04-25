@@ -54,5 +54,7 @@ jobs:
         run: npm run integration-tests
 
       - name: Create a VSIX package for target ${{ matrix.target }}
-        run: |
-          npm run vsce:package -- --target ${{ matrix.target }}
+        run: >
+          npm run vsce:package --
+          --target ${{ matrix.target }}
+          --out ocm-vscode-extension-${{ matrix.target }}-dev.vsix
