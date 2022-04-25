@@ -7,11 +7,11 @@ export interface RequiredTool {
 
 export const requiredTools: RequiredTool[] = [
 	{
-		'name': 'kubectl1',
+		'name': 'kubectl',
 		'installUrl': 'https://kubernetes.io/docs/tasks/tools/#kubectl'
 	},
 	{
-		'name': 'clusteradm1',
+		'name': 'clusteradm',
 		'installUrl': 'https://github.com/open-cluster-management-io/clusteradm#install-the-clusteradm-command-line'
 	},
 	{
@@ -30,29 +30,4 @@ export async function verifyTools(...tools: RequiredTool[]): Promise<string|stri
 	);
 	return Promise.all(executionPromises)
 		.then(() => Promise.resolve('OCM extension, all tools are accessible, we\'re good to go'));
-}
-
-// parse the locally installed clusteradm client and server version
-// will be resolved with a string[] or rejected with a string
-export async function parseClusteradmVersion(): Promise<string[] | string> {
-	return new Promise((resolve, reject) => {
-		// verify clusteradm exists
-		shell.checkToolExists('clusteradm')
-			.then(() => {
-				// get clusteradm version
-				shell.executeShellCommand('clusteradm version')
-					.then((stdout: string) => {
-						// parse version and resolve promise
-						let clientVersion = stdout.split('\n')[0].split(':')[1].trim();
-						let serverVersion = stdout.split('\n')[1].split(':')[1].trim();
-						resolve([
-							`OCM extension, found clusteradm client version ${clientVersion}`,
-							`OCM extension, found clusteradm server version ${serverVersion}`
-						]);
-					})
-					.catch((stderr: string) => reject(
-						`OCM extension, unable to detect clusteradm version: ${stderr}`));
-			})
-			.catch(() => reject('OCM extension, looks like clusteradm is not installed'));
-	});
 }

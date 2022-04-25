@@ -31,7 +31,6 @@
 	"activationEvents": [
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.verifyTools",
-		"onCommand:ocm-vscode-extension.getClusteradmVersion",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
 		"onView:ocm.explorer"
 	],
@@ -46,11 +45,6 @@
 			{
 				"command": "ocm-vscode-extension.verifyTools",
 				"title": "Verify required tools existence",
-				"category": "OCM"
-			},
-			{
-				"command": "ocm-vscode-extension.getClusteradmVersion",
-				"title": "Get clusteradm version",
 				"category": "OCM"
 			},
 			{
@@ -91,17 +85,9 @@
 		"viewsWelcome": [
 			{
 				"view": "forDevelopers",
-				"contents": "[Check Clusteradm Version](command:ocm-vscode-extension.getClusteradmVersion)\n[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
+				"contents": "[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
 			}
 		],
-		"menus": {
-			"view/item/context": [
-				{
-					"command": "ocm-vscode-extension.ocmNewProject",
-					"when": "view == ocmView && viewItem == createProject"
-				}
-			]
-		},
 		"snippets": [
 			{
 				"language": "yaml",

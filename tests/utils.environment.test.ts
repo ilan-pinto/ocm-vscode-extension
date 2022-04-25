@@ -1,7 +1,7 @@
 import * as chaiAsPromised from 'chai-as-promised';
 import * as shellUtils from '../src/utils/shell';
 import * as sinon from 'sinon';
-import { RequiredTool, parseClusteradmVersion, verifyTools } from '../src/utils/environment';
+import { RequiredTool, verifyTools } from '../src/utils/environment';
 import { use as chaiUse, expect } from 'chai';
 import { beforeEach } from 'mocha';
 
@@ -62,44 +62,6 @@ suite('Test cases for the environment utility functions', () => {
 				`OCM extension, ${dummyTool1.name} is missing, please install it`,
 				dummyTool2.installUrl
 			]);
-		});
-	});
-
-	suite('Testing parseClusteradmVersion', () => {
-		// dummy "clusteradm version" output
-		const outputConnectedServer = `client version	:v0.2.0
-		server version	:v1.2.3`;
-
-		test('When clusteradm is installed and connected to a server, the function should be successful', async () => {
-			// given the clusteradm tool exists
-			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').resolves();
-			// given the version command will resolved to a correct output
-			sinon.stub(shellUtils, 'executeShellCommand').withArgs('clusteradm version').resolves(outputConnectedServer);
-			// then expect the promise to be resolved, the and the message consumers to be called accordingly
-			return expect(parseClusteradmVersion())
-				.to.eventually.have.members([
-					'OCM extension, found clusteradm client version v0.2.0',
-					'OCM extension, found clusteradm server version v1.2.3'
-				]);
-		});
-
-		test('When failed to get clusteradm version, the function should fail', async () => {
-			// given the clusteradm tool exists
-			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').resolves();
-			// given the version command will rejected with a custom error
-			let rejectMessage = 'You are not elias\'s younger brother';
-			sinon.stub(shellUtils, 'executeShellCommand').withArgs('clusteradm version').rejects(rejectMessage);
-			// then expect the promise to be rejected, the and the message consumers to be called accordingly
-			return expect(parseClusteradmVersion()).to.eventually.be.rejectedWith(
-				`OCM extension, unable to detect clusteradm version: ${rejectMessage}`);
-		});
-
-		test('When clusteradm is not installed, the function should fail', async () => {
-			// given the clusteradm tool does NOT exists
-			sinon.stub(shellUtils, 'checkToolExists').withArgs('clusteradm').rejects();
-			// then expect the promise to be rejected, the and the message consumers to be called accordingly
-			return expect(parseClusteradmVersion()).to.eventually.be.rejectedWith(
-				'OCM extension, looks like clusteradm is not installed');
 		});
 	});
 });

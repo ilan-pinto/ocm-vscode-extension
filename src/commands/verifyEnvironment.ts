@@ -13,11 +13,3 @@ export async function verifyTools(): Promise<void> {
 				}
 			}));
 }
-
-// get clusteradm version
-export async function getClusteradmVersion(): Promise<void> {
-	environment.parseClusteradmVersion()
-		// @ts-ignore
-		.then((msgs: string[]) => msgs.forEach(msg => vscode.window.showInformationMessage(msg)))
-		.catch((msg: string) => vscode.window.showErrorMessage(msg));
-}
