@@ -10,7 +10,7 @@ import { beforeEach } from 'mocha';
 chaiUse(sinonChai);
 
 // Test cases for the the ocm-vscode-extension.createLocalEnvironment command
-suite('Create local environment command', () => {
+suite.skip('Create local environment command', () => {
 	const fakeBuildSuccessMsg = 'this is a fake message';
 
 	var quickPickStub: sinon.SinonStub;

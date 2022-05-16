@@ -102,11 +102,11 @@ export async function createLocalEnvironment(): Promise<void> {
 		async (progress) => {
 			progress.report({increment: 0, message: 'verifying the required tools existence' });
 			// verify the required tool exists
-			environment.verifyTools(...environment.requiredTools)
+			await environment.verifyTools(...environment.requiredTools)
 				.then(async () => {
 					progress.report({increment: 20, message: 'starting to build your local environment'});
 					// build the environment
-					build.buildLocalEnv(clusters, (r: build.ProgressReport) => progress.report(r))
+					await build.buildLocalEnv(clusters, (r: build.ProgressReport) => progress.report(r))
 						.then((msg: string) => vscode.window.showInformationMessage(msg))
 						.catch((err: string | Error) =>
 							vscode.window.showErrorMessage(err instanceof Error ? err.name : err));
