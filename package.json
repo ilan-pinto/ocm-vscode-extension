@@ -32,7 +32,7 @@
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
-		"onView:ocm.explorer"
+		"onView:connectedClusters"
 	],
 	"main": "./out/src/extension.js",
 	"contributes": {
@@ -51,6 +51,14 @@
 				"command": "ocm-vscode-extension.createLocalEnvironment",
 				"title": "Build local environment",
 				"category": "OCM"
+			},
+			{
+				"command": "connectedClusters.refresh",
+				"title": "Refresh",
+				"icon": {
+					"light": "images/light/refresh.svg",
+					"dark": "images/dark/refresh.svg"
+				}
 			}
 		],
 		"viewsContainers": {
@@ -69,16 +77,8 @@
 					"name": "Developers Tools"
 				},
 				{
-					"id": "managedClustersExplorer",
-					"name": "Managed Clusters Explorer"
-				},
-				{
-					"id": "hubClustersExplorer",
-					"name": "Hub Clusters Explorer"
-				},
-				{
-					"id": "deployedApplication",
-					"name": "Deployed Application"
+					"id": "connectedClusters",
+					"name": "Connected Clusters"
 				}
 			]
 		},
@@ -88,6 +88,15 @@
 				"contents": "[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
 			}
 		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "connectedClusters.refresh",
+					"when": "view == connectedClusters",
+					"group": "navigation"
+				}
+			]
+		},
 		"snippets": [
 			{
 				"language": "yaml",
@@ -144,6 +153,7 @@
 		"tests:cov-rep": "npm run test:cov-rep"
 	},
 	"dependencies": {
+		"@kubernetes/client-node": "^0.16.3",
 		"@types/lodash": "^4.14.182",
 		"@types/shelljs": "^0.8.11",
 		"fs-extra": "^10.0.1",

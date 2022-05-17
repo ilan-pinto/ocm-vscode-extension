@@ -1,3 +1,4 @@
+import * as connectedClusters from './providers/connectedClusters';
 import * as createEnvironment from './commands/createEnvironment';
 import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
@@ -22,6 +23,10 @@ const cmdVerifyToolsDisposable = vscode.commands.registerCommand(
 const cmdBuildLocalClusterDisposable = vscode.commands.registerCommand(
 	`${extName}.${cmdBuildLocalClusters}`, () => createEnvironment.createLocalEnvironment()
 );
+
+let connectedClustersProvider = new connectedClusters.ConnectedClustersProvider();
+vscode.window.registerTreeDataProvider('connectedClusters', connectedClustersProvider);
+vscode.commands.registerCommand('connectedClusters.refresh', () => connectedClustersProvider.refresh());
 
 // EXPORTS
 export function activate(context: vscode.ExtensionContext): void {
