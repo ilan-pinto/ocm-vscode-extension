@@ -9,9 +9,14 @@ import { beforeEach } from 'mocha';
 
 chaiUse(sinonChai);
 
+async function sleep(ms: number): Promise<void> {
+	return new Promise((res, _rej) => setTimeout(() => res(), ms));
+}
+
 // Test cases for the the ocm-vscode-extension.createLocalEnvironment command
-suite.skip('Create local environment command', () => {
+suite('Create local environment command', () => {
 	const fakeBuildSuccessMsg = 'this is a fake message';
+	const buildEnvironmentDelayMS = 500;
 
 	var quickPickStub: sinon.SinonStub;
 	var inputBoxStub: sinon.SinonStub;
@@ -42,7 +47,8 @@ suite.skip('Create local environment command', () => {
 			// given the build tool utility function will be resolved with a fake message
 			let buildLocalEnvSpy = sinon.stub(buildTools, 'buildLocalEnv').resolves(fakeBuildSuccessMsg);
 			// when invoking the command
-			await vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			await sleep(buildEnvironmentDelayMS); // wait a sec
 			// then expect info message to be called
 			expect(infoBoxSpy).to.be.calledOnceWith(fakeBuildSuccessMsg);
 			// then expect the build environment utility function will be invoked with default configuration
@@ -56,7 +62,8 @@ suite.skip('Create local environment command', () => {
 			// given kind and clusteradm are missing
 			sinon.stub(environmentTools, 'verifyTools').withArgs(...environmentTools.requiredTools).rejects();
 			// when invoking the command
-			await vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			await sleep(buildEnvironmentDelayMS); // wait a sec
 			// the expect a failure message
 			expect(errorBoxSpy).to.be.calledWith('OCM extension, unable to verify the existence of the required tools');
 		});
@@ -67,7 +74,8 @@ suite.skip('Create local environment command', () => {
 			// given the build tool utility function will be rejected with a fake message
 			sinon.stub(buildTools, 'buildLocalEnv').rejects('oops try again');
 			// when invoking the command
-			await vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			await sleep(buildEnvironmentDelayMS); // wait a sec
 			//the expect a failure message
 			expect(errorBoxSpy).to.be.calledOnceWith('oops try again');
 		});
@@ -106,7 +114,8 @@ suite.skip('Create local environment command', () => {
 			// given the user will choose to use the default naming convention for the managed clusters
 			quickPickStub.withArgs([YesNo.yes, YesNo.no], matchUseDefaultNameForManagedInputBox).resolves(YesNo.yes);
 			// when invoking the command
-			await vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			await sleep(buildEnvironmentDelayMS); // wait a sec
 			// then expect info message to be called
 			expect(infoBoxSpy).to.be.calledOnceWith(fakeBuildSuccessMsg);
 			// then expect the build environment utility function will be invoked with the expected configuration
@@ -140,7 +149,8 @@ suite.skip('Create local environment command', () => {
 			// given the user will choose to use the default naming convention for the managed clusters
 			quickPickStub.withArgs([YesNo.yes, YesNo.no], matchUseDefaultNameForManagedInputBox).resolves(YesNo.yes);
 			// when invoking the command
-			await vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			await sleep(buildEnvironmentDelayMS); // wait a sec
 			// then expect info message to be called
 			expect(infoBoxSpy).to.be.calledOnceWith(fakeBuildSuccessMsg);
 			// then expect the build environment utility function will be invoked with the expected configuration
@@ -174,7 +184,8 @@ suite.skip('Create local environment command', () => {
 			// given the user will choose to use the default naming convention for the managed clusters
 			quickPickStub.withArgs([YesNo.yes, YesNo.no], matchUseDefaultNameForManagedInputBox).resolves(YesNo.yes);
 			// when invoking the command
-			await vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			await sleep(buildEnvironmentDelayMS); // wait a sec
 			// then expect info message to be called
 			expect(infoBoxSpy).to.be.calledOnceWith(fakeBuildSuccessMsg);
 			// then expect the build environment utility function will be invoked with the expected configuration
@@ -217,7 +228,8 @@ suite.skip('Create local environment command', () => {
 			inputBoxStub.withArgs(matchCluster2NameInputBox).resolves(fakeManage2Name);
 			inputBoxStub.withArgs(matchCluster3NameInputBox).resolves(fakeManage3Name);
 			// when invoking the command
-			await vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
+			await sleep(buildEnvironmentDelayMS); // wait a sec
 			// then expect info message to be called
 			expect(infoBoxSpy).to.be.calledOnceWith(fakeBuildSuccessMsg);
 			// then expect the build environment utility function will be invoked with the expected configuration
