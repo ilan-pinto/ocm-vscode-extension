@@ -81,7 +81,7 @@ async function issueJoinRequest(managedCluster: Cluster, joinCmd: string): Promi
 async function sendJoinRequests(
 		joinCmd: string, managedClusters: Cluster[], reporter: ProgressReporter): Promise<void|string> {
 
-	console.debug(`issuing a join requests for ${managedClusters.length} managed clusters`);
+	console.debug(`issuing join requests for ${managedClusters.length} managed clusters`);
 	reporter({increment: 20 , message: 'issuing join requests for the managed clusters'});
 	return managedClusters.reduce(
 		(previousPromise, currentPromise) =>
