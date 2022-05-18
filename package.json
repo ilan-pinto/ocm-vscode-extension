@@ -32,7 +32,7 @@
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
-		"onView:connectedClusters"
+		"onView:ocm-vscode-extension.connectedClustersView"
 	],
 	"main": "./out/src/extension.js",
 	"contributes": {
@@ -53,8 +53,8 @@
 				"category": "OCM"
 			},
 			{
-				"command": "connectedClusters.refresh",
-				"title": "Refresh",
+				"command": "ocm-vscode-extension.connectedClustersView.refresh",
+				"title": "Refresh connected clusters view",
 				"icon": {
 					"light": "images/light/refresh.svg",
 					"dark": "images/dark/refresh.svg"
@@ -73,26 +73,26 @@
 		"views": {
 			"ocmView": [
 				{
-					"id": "forDevelopers",
+					"id": "ocm-vscode-extension.forDevelopersView",
 					"name": "Developers Tools"
 				},
 				{
-					"id": "connectedClusters",
+					"id": "ocm-vscode-extension.connectedClustersView",
 					"name": "Connected Clusters"
 				}
 			]
 		},
 		"viewsWelcome": [
 			{
-				"view": "forDevelopers",
+				"view": "ocm-vscode-extension.forDevelopersView",
 				"contents": "[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
 			}
 		],
 		"menus": {
 			"view/title": [
 				{
-					"command": "connectedClusters.refresh",
-					"when": "view == connectedClusters",
+					"command": "ocm-vscode-extension.connectedClustersView.refresh",
+					"when": "view == ocm-vscode-extension.connectedClustersView",
 					"group": "navigation"
 				}
 			]

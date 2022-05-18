@@ -25,8 +25,8 @@ const cmdBuildLocalClusterDisposable = vscode.commands.registerCommand(
 );
 
 let connectedClustersProvider = new connectedClusters.ConnectedClustersProvider();
-vscode.window.registerTreeDataProvider('connectedClusters', connectedClustersProvider);
-vscode.commands.registerCommand('connectedClusters.refresh', () => connectedClustersProvider.refresh());
+vscode.window.registerTreeDataProvider(`${extName}.connectedClustersView`, connectedClustersProvider);
+vscode.commands.registerCommand(`${extName}.connectedClustersView.refresh`, () => connectedClustersProvider.refresh());
 
 // EXPORTS
 export function activate(context: vscode.ExtensionContext): void {
