@@ -7,7 +7,7 @@ export function run(): Promise<void> {
 	const mocha = new Mocha({
 		ui: 'tdd',
 		color: true,
-		slow: 600
+		slow: 1100
 	});
 
 	const testsRoot: string = path.join(__dirname, 'test-files');
