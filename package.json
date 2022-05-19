@@ -32,7 +32,7 @@
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
-		"onView:ocm.explorer"
+		"onView:ocm-vscode-extension.connectedClustersView"
 	],
 	"main": "./out/src/extension.js",
 	"contributes": {
@@ -51,6 +51,14 @@
 				"command": "ocm-vscode-extension.createLocalEnvironment",
 				"title": "Build local environment",
 				"category": "OCM"
+			},
+			{
+				"command": "ocm-vscode-extension.connectedClustersView.refresh",
+				"title": "Refresh connected clusters view",
+				"icon": {
+					"light": "images/light/refresh.svg",
+					"dark": "images/dark/refresh.svg"
+				}
 			}
 		],
 		"viewsContainers": {
@@ -58,36 +66,37 @@
 				{
 					"id": "ocmView",
 					"title": "OCM",
-					"icon": "images/icon-black.svg"
+					"icon": "images/light/ocm.svg"
 				}
 			]
 		},
 		"views": {
 			"ocmView": [
 				{
-					"id": "forDevelopers",
+					"id": "ocm-vscode-extension.forDevelopersView",
 					"name": "Developers Tools"
 				},
 				{
-					"id": "managedClustersExplorer",
-					"name": "Managed Clusters Explorer"
-				},
-				{
-					"id": "hubClustersExplorer",
-					"name": "Hub Clusters Explorer"
-				},
-				{
-					"id": "deployedApplication",
-					"name": "Deployed Application"
+					"id": "ocm-vscode-extension.connectedClustersView",
+					"name": "Connected Clusters"
 				}
 			]
 		},
 		"viewsWelcome": [
 			{
-				"view": "forDevelopers",
+				"view": "ocm-vscode-extension.forDevelopersView",
 				"contents": "[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
 			}
 		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "ocm-vscode-extension.connectedClustersView.refresh",
+					"when": "view == ocm-vscode-extension.connectedClustersView",
+					"group": "navigation"
+				}
+			]
+		},
 		"snippets": [
 			{
 				"language": "yaml",
@@ -144,6 +153,7 @@
 		"tests:cov-rep": "npm run test:cov-rep"
 	},
 	"dependencies": {
+		"@kubernetes/client-node": "^0.16.3",
 		"@types/lodash": "^4.14.182",
 		"@types/shelljs": "^0.8.11",
 		"fs-extra": "^10.0.1",
