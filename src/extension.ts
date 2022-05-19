@@ -1,38 +1,21 @@
-import * as connectedClusters from './providers/connectedClusters';
 import * as createEnvironment from './commands/createEnvironment';
 import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as vscode from 'vscode';
+import { ConnectedClustersProvider } from './providers/connectedClusters';
 
-const extName = 'ocm-vscode-extension';
-
-// COMMAND NAMES
-const cmdNewProjectName = 'ocmNewProject';
-const cmdVerifyTools = 'verifyTools';
-const cmdBuildLocalClusters = 'createLocalEnvironment';
-
-// DISPOSABLES
-const cmdNewProjectDisposable = vscode.commands.registerCommand(
-	`${extName}.${cmdNewProjectName}`, () => newProject.create()
-);
-
-const cmdVerifyToolsDisposable = vscode.commands.registerCommand(
-	`${extName}.${cmdVerifyTools}`, () => verifyEnvironment.verifyTools()
-);
-
-const cmdBuildLocalClusterDisposable = vscode.commands.registerCommand(
-	`${extName}.${cmdBuildLocalClusters}`, () => createEnvironment.createLocalEnvironment()
-);
-
-let connectedClustersProvider = new connectedClusters.ConnectedClustersProvider();
-vscode.window.registerTreeDataProvider(`${extName}.connectedClustersView`, connectedClustersProvider);
-vscode.commands.registerCommand(`${extName}.connectedClustersView.refresh`, () => connectedClustersProvider.refresh());
-
-// EXPORTS
 export function activate(context: vscode.ExtensionContext): void {
+	let connectedClustersProvider = new ConnectedClustersProvider();
 	context.subscriptions.push(
-		cmdNewProjectDisposable, // command: ocm-vscode-extension.ocmNewProject
-		cmdVerifyToolsDisposable, // command: ocm-vscode-extension.verifyTools
-		cmdBuildLocalClusterDisposable // command: ocm-vscode-extension.createLocalEnvironment
+		vscode.commands.registerCommand(
+			'ocm-vscode-extension.ocmNewProject', () => newProject.create()),
+		vscode.commands.registerCommand(
+			'ocm-vscode-extension.verifyTools', () => verifyEnvironment.verifyTools()),
+		vscode.commands.registerCommand(
+			'ocm-vscode-extension.createLocalEnvironment', () => createEnvironment.createLocalEnvironment()),
+		vscode.window.registerTreeDataProvider(
+			'ocm-vscode-extension.connectedClustersView', connectedClustersProvider),
+		vscode.commands.registerCommand(
+			'ocm-vscode-extension.connectedClustersView.refresh', () => connectedClustersProvider.refresh())
 	);
 }
